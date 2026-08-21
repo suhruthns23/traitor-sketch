@@ -1,11 +1,20 @@
 /* =========================================================
    TRAITOR SKETCH
-   Local single-device pass-the-phone game
-   ========================================================= */
+   LOCAL SINGLE-DEVICE PASS-THE-PHONE GAME
+
+   VERSION:
+   - No categories
+   - 1000-word master pool
+   - 3-10 players
+   - 2 drawing rounds
+   - 15 seconds per stroke
+   - Private pass-the-phone voting
+   - Traitor final guess
+========================================================= */
 
 
 /* =========================================================
-   GAME DATA
+   PLAYER COLORS
 ========================================================= */
 
 const COLORS = [
@@ -21,104 +30,1172 @@ const COLORS = [
     "#8b5cf6"  // Violet
 ];
 
-const CATEGORIES = {
 
-    Animals: {
-        icon: "🐾",
-        words: [
-            "CAT",
-            "DOG",
-            "ELEPHANT",
-            "TIGER",
-            "LION",
-            "MONKEY",
-            "HORSE",
-            "RABBIT",
-            "GIRAFFE",
-            "ZEBRA"
-        ]
-    },
+/* =========================================================
+   1000 DRAWABLE WORDS
+========================================================= */
 
-    Fruits: {
-        icon: "🍎",
-        words: [
-            "APPLE",
-            "BANANA",
-            "MANGO",
-            "ORANGE",
-            "GRAPE",
-            "WATERMELON",
-            "PINEAPPLE",
-            "PAPAYA",
-            "GUAVA",
-            "STRAWBERRY"
-        ]
-    },
+const WORDS = [
 
-    "Household Items": {
-        icon: "🏠",
-        words: [
-            "CHAIR",
-            "TABLE",
-            "PILLOW",
-            "MIRROR",
-            "BROOM",
-            "BUCKET",
-            "SPOON",
-            "PLATE",
-            "LAMP",
-            "CLOCK"
-        ]
-    },
+    /* ---------- ANIMALS ---------- */
 
-    Vegetables: {
-        icon: "🥕",
-        words: [
-            "CARROT",
-            "POTATO",
-            "ONION",
-            "TOMATO",
-            "CABBAGE",
-            "SPINACH",
-            "BEANS",
-            "PEAS",
-            "PUMPKIN",
-            "RADISH"
-        ]
-    },
+    "CAT",
+    "DOG",
+    "LION",
+    "TIGER",
+    "ELEPHANT",
+    "GIRAFFE",
+    "ZEBRA",
+    "HORSE",
+    "COW",
+    "GOAT",
+    "SHEEP",
+    "PIG",
+    "CHICKEN",
+    "ROOSTER",
+    "DUCK",
+    "GOOSE",
+    "TURKEY",
+    "RABBIT",
+    "MOUSE",
+    "RAT",
+    "HAMSTER",
+    "SQUIRREL",
+    "MONKEY",
+    "GORILLA",
+    "CHIMPANZEE",
+    "BEAR",
+    "POLAR BEAR",
+    "PANDA",
+    "KOALA",
+    "KANGAROO",
+    "DEER",
+    "BUFFALO",
+    "CAMEL",
+    "DONKEY",
+    "FOX",
+    "WOLF",
+    "LEOPARD",
+    "CHEETAH",
+    "JAGUAR",
+    "HYENA",
+    "PENGUIN",
+    "SEAL",
+    "WALRUS",
+    "OTTER",
+    "DOLPHIN",
+    "WHALE",
+    "SHARK",
+    "OCTOPUS",
+    "SQUID",
+    "CRAB",
+    "LOBSTER",
+    "TURTLE",
+    "CROCODILE",
+    "ALLIGATOR",
+    "SNAKE",
+    "LIZARD",
+    "FROG",
+    "TOAD",
+    "SNAIL",
+    "BUTTERFLY",
+    "BEE",
+    "ANT",
+    "SPIDER",
+    "MOSQUITO",
+    "DRAGONFLY",
+    "BEETLE",
+    "PARROT",
+    "EAGLE",
+    "OWL",
+    "CROW",
+    "PIGEON",
+    "PEACOCK",
+    "SWAN",
+    "FLAMINGO",
+    "OSTRICH",
+    "WOODPECKER",
+    "SEAGULL",
+    "BAT",
+    "HEDGEHOG",
+    "PORCUPINE",
+    "HIPPOPOTAMUS",
+    "RHINOCEROS",
+    "GORILLA",
+    "CAMEL",
+    "LLAMA",
+    "ALPACA",
+    "DONKEY",
+    "MOOSE",
+    "REINDEER",
+    "BEAVER",
+    "SKUNK",
+    "MEERKAT",
+    "CHEETAH",
+    "CHAMELEON",
+    "IGUANA",
+    "DINOSAUR",
 
-    Vehicles: {
-        icon: "🚗",
-        words: [
-            "CAR",
-            "BUS",
-            "BICYCLE",
-            "TRAIN",
-            "AIRPLANE",
-            "BOAT",
-            "MOTORCYCLE",
-            "TRUCK",
-            "HELICOPTER",
-            "SCOOTER"
-        ]
-    },
+    /* ---------- FRUITS ---------- */
 
-    Sports: {
-        icon: "⚽",
-        words: [
-            "CRICKET",
-            "FOOTBALL",
-            "TENNIS",
-            "BASKETBALL",
-            "HOCKEY",
-            "BADMINTON",
-            "VOLLEYBALL",
-            "BASEBALL",
-            "GOLF",
-            "BOXING"
-        ]
-    }
-};
+    "APPLE",
+    "BANANA",
+    "MANGO",
+    "ORANGE",
+    "GRAPE",
+    "WATERMELON",
+    "PINEAPPLE",
+    "PAPAYA",
+    "GUAVA",
+    "STRAWBERRY",
+    "BLUEBERRY",
+    "RASPBERRY",
+    "BLACKBERRY",
+    "CHERRY",
+    "PEACH",
+    "PEAR",
+    "PLUM",
+    "KIWI",
+    "LEMON",
+    "LIME",
+    "COCONUT",
+    "AVOCADO",
+    "POMEGRANATE",
+    "FIG",
+    "DATE",
+    "APRICOT",
+    "MELON",
+    "CANTALOUPE",
+    "LYCHEE",
+    "JACKFRUIT",
+    "DRAGON FRUIT",
+    "PASSION FRUIT",
+    "STAR FRUIT",
+    "GRAPEFRUIT",
+    "TANGERINE",
+    "CRANBERRY",
+    "RAISIN",
+    "OLIVE",
+    "TAMARIND",
+    "CUSTARD APPLE",
+    "SAPOTA",
+    "JAMUN",
+    "MULBERRY",
+    "GOOSEBERRY",
+    "PERSIMMON",
+    "NECTARINE",
+    "QUINCE",
+    "DURIAN",
+    "LONGAN",
+    "RAMBUTAN",
+
+    /* ---------- VEGETABLES ---------- */
+
+    "CARROT",
+    "POTATO",
+    "ONION",
+    "TOMATO",
+    "CABBAGE",
+    "SPINACH",
+    "BEANS",
+    "PEAS",
+    "PUMPKIN",
+    "RADISH",
+    "BEETROOT",
+    "BROCCOLI",
+    "CAULIFLOWER",
+    "CUCUMBER",
+    "BRINJAL",
+    "EGGPLANT",
+    "LADYFINGER",
+    "CAPSICUM",
+    "CHILLI",
+    "CORN",
+    "SWEET POTATO",
+    "GINGER",
+    "GARLIC",
+    "TURNIP",
+    "LETTUCE",
+    "CELERY",
+    "MUSHROOM",
+    "BOTTLE GOURD",
+    "BITTER GOURD",
+    "RIDGE GOURD",
+    "DRUMSTICK",
+    "ZUCCHINI",
+    "ARTICHOKE",
+    "ASPARAGUS",
+    "LEEK",
+    "YAM",
+    "PARSNIP",
+    "KALE",
+    "MINT",
+    "CORIANDER",
+
+    /* ---------- FOOD ---------- */
+
+    "PIZZA",
+    "BURGER",
+    "SANDWICH",
+    "HOT DOG",
+    "CAKE",
+    "ICE CREAM",
+    "CUPCAKE",
+    "DONUT",
+    "COOKIE",
+    "BISCUIT",
+    "CHOCOLATE",
+    "CANDY",
+    "LOLLIPOP",
+    "POPCORN",
+    "NOODLES",
+    "PASTA",
+    "SPAGHETTI",
+    "LASAGNA",
+    "FRIES",
+    "PANCAKE",
+    "WAFFLE",
+    "OMELETTE",
+    "TOAST",
+    "BREAD",
+    "CHEESE",
+    "BUTTER",
+    "YOGURT",
+    "RICE",
+    "DOSA",
+    "IDLI",
+    "VADA",
+    "SAMOSA",
+    "PARATHA",
+    "ROTI",
+    "CHAPATI",
+    "BIRYANI",
+    "CURRY",
+    "SOUP",
+    "SALAD",
+    "SUSHI",
+    "TACO",
+    "BURRITO",
+    "NACHOS",
+    "PRETZEL",
+    "MUFFIN",
+    "PIE",
+    "PUDDING",
+    "JELLY",
+    "HONEY",
+    "JAM",
+    "KETCHUP",
+    "MUSTARD",
+    "SAUCE",
+    "KETCHUP BOTTLE",
+    "CEREAL",
+    "SPOON",
+    "FORK",
+    "KNIFE",
+    "PLATE",
+    "BOWL",
+    "CUP",
+
+    /* ---------- DRINKS ---------- */
+
+    "WATER",
+    "MILK",
+    "TEA",
+    "COFFEE",
+    "JUICE",
+    "LEMONADE",
+    "MILKSHAKE",
+    "SMOOTHIE",
+    "HOT CHOCOLATE",
+    "COCONUT WATER",
+    "SOFT DRINK",
+    "WATER BOTTLE",
+    "TEA CUP",
+    "COFFEE CUP",
+    "STRAW",
+    "THERMOS",
+
+    /* ---------- HOUSEHOLD ITEMS ---------- */
+
+    "CHAIR",
+    "TABLE",
+    "SOFA",
+    "BED",
+    "PILLOW",
+    "BLANKET",
+    "MATTRESS",
+    "MIRROR",
+    "BROOM",
+    "MOP",
+    "BUCKET",
+    "DUSTBIN",
+    "LAMP",
+    "CLOCK",
+    "FAN",
+    "TELEVISION",
+    "REMOTE",
+    "CURTAIN",
+    "DOOR",
+    "WINDOW",
+    "KEY",
+    "LOCK",
+    "HANGER",
+    "IRON",
+    "IRONING BOARD",
+    "VACUUM CLEANER",
+    "WASHING MACHINE",
+    "REFRIGERATOR",
+    "OVEN",
+    "MICROWAVE",
+    "TOASTER",
+    "BLENDER",
+    "MIXER",
+    "KETTLE",
+    "PAN",
+    "POT",
+    "PRESSURE COOKER",
+    "BOTTLE",
+    "JAR",
+    "BOX",
+    "BASKET",
+    "VASE",
+    "CANDLE",
+    "PLANT POT",
+    "BOOKSHELF",
+    "DRAWER",
+    "CARPET",
+    "RUG",
+    "DOORMAT",
+    "UMBRELLA",
+    "RAINCOAT",
+    "TOWEL",
+    "TOOTHBRUSH",
+    "TOOTHPASTE",
+    "SOAP",
+    "SHAMPOO",
+    "COMB",
+    "HAIRBRUSH",
+    "SCISSORS",
+    "NAIL CLIPPER",
+    "PERFUME",
+    "WALLET",
+    "PURSE",
+    "BACKPACK",
+    "SUITCASE",
+
+    /* ---------- SCHOOL / OFFICE ---------- */
+
+    "BOOK",
+    "NOTEBOOK",
+    "PENCIL",
+    "PEN",
+    "ERASER",
+    "RULER",
+    "SHARPENER",
+    "MARKER",
+    "CRAYON",
+    "PAINTBRUSH",
+    "PAINT",
+    "PAPER",
+    "ENVELOPE",
+    "STAPLER",
+    "PAPER CLIP",
+    "SCISSORS",
+    "GLUE",
+    "TAPE",
+    "CALCULATOR",
+    "DESK",
+    "BLACKBOARD",
+    "WHITEBOARD",
+    "CHALK",
+    "SCHOOL BAG",
+    "SCHOOL BUS",
+    "COMPUTER",
+    "LAPTOP",
+    "KEYBOARD",
+    "MOUSE",
+    "PRINTER",
+    "MONITOR",
+    "HEADPHONES",
+    "MICROPHONE",
+    "FOLDER",
+    "FILE",
+    "CALENDAR",
+    "DIARY",
+    "STICKER",
+    "BADGE",
+    "ID CARD",
+    "CERTIFICATE",
+    "TROPHY",
+
+    /* ---------- ELECTRONICS ---------- */
+
+    "PHONE",
+    "SMARTPHONE",
+    "TABLET",
+    "LAPTOP",
+    "COMPUTER",
+    "CAMERA",
+    "TELEVISION",
+    "RADIO",
+    "SPEAKER",
+    "HEADPHONES",
+    "EARPHONES",
+    "WATCH",
+    "SMARTWATCH",
+    "REMOTE CONTROL",
+    "GAME CONTROLLER",
+    "KEYBOARD",
+    "MOUSE",
+    "PRINTER",
+    "PROJECTOR",
+    "DRONE",
+    "ROUTER",
+    "CHARGER",
+    "BATTERY",
+    "USB DRIVE",
+    "MEMORY CARD",
+    "POWER BANK",
+    "LIGHT BULB",
+    "FLASHLIGHT",
+    "ALARM CLOCK",
+    "CALCULATOR",
+
+    /* ---------- VEHICLES ---------- */
+
+    "CAR",
+    "BUS",
+    "BICYCLE",
+    "MOTORCYCLE",
+    "SCOOTER",
+    "TRAIN",
+    "TRUCK",
+    "VAN",
+    "TAXI",
+    "AMBULANCE",
+    "FIRE TRUCK",
+    "POLICE CAR",
+    "TRACTOR",
+    "JEEP",
+    "RACE CAR",
+    "SPORTS CAR",
+    "AIRPLANE",
+    "HELICOPTER",
+    "ROCKET",
+    "HOT AIR BALLOON",
+    "BOAT",
+    "SHIP",
+    "SAILBOAT",
+    "SUBMARINE",
+    "CANOE",
+    "KAYAK",
+    "YACHT",
+    "CART",
+    "RICKSHAW",
+    "AUTO RICKSHAW",
+    "METRO",
+    "TRAM",
+    "BULLET TRAIN",
+    "SCHOOL BUS",
+    "AMBULANCE",
+    "FERRY",
+    "FORKLIFT",
+    "DUMP TRUCK",
+    "TOW TRUCK",
+    "CEMENT TRUCK",
+
+    /* ---------- SPORTS ---------- */
+
+    "CRICKET",
+    "FOOTBALL",
+    "SOCCER",
+    "TENNIS",
+    "BASKETBALL",
+    "HOCKEY",
+    "BADMINTON",
+    "VOLLEYBALL",
+    "BASEBALL",
+    "GOLF",
+    "BOXING",
+    "WRESTLING",
+    "SWIMMING",
+    "RUNNING",
+    "CYCLING",
+    "SKATEBOARDING",
+    "SURFING",
+    "SKIING",
+    "ARCHERY",
+    "BOWLING",
+    "TABLE TENNIS",
+    "CARROM",
+    "CHESS",
+    "KABADDI",
+    "KHO KHO",
+    "RUGBY",
+    "CRICKET BAT",
+    "CRICKET BALL",
+    "FOOTBALL",
+    "TENNIS RACKET",
+    "BADMINTON RACKET",
+    "GOLF CLUB",
+    "BASEBALL BAT",
+    "BOXING GLOVE",
+    "MEDAL",
+    "TROPHY",
+    "WHISTLE",
+    "SPORTS SHOES",
+    "HELMET",
+    "STOPWATCH",
+
+    /* ---------- MUSICAL ITEMS ---------- */
+
+    "GUITAR",
+    "PIANO",
+    "DRUM",
+    "VIOLIN",
+    "FLUTE",
+    "TRUMPET",
+    "SAXOPHONE",
+    "HARMONICA",
+    "TAMBOURINE",
+    "BELL",
+    "HARP",
+    "CELLO",
+    "MICROPHONE",
+    "SPEAKER",
+    "DJ TURNTABLE",
+    "MUSIC NOTE",
+    "HEADPHONES",
+    "DRUMSTICK",
+    "CONCERT STAGE",
+    "RADIO",
+
+    /* ---------- CLOTHING ---------- */
+
+    "SHIRT",
+    "T-SHIRT",
+    "PANTS",
+    "JEANS",
+    "SHORTS",
+    "SKIRT",
+    "DRESS",
+    "JACKET",
+    "COAT",
+    "SWEATER",
+    "HOODIE",
+    "TIE",
+    "BOW TIE",
+    "BELT",
+    "SOCKS",
+    "SHOES",
+    "SANDALS",
+    "BOOTS",
+    "SLIPPERS",
+    "HAT",
+    "CAP",
+    "HELMET",
+    "SCARF",
+    "GLOVES",
+    "SUNGLASSES",
+    "GLASSES",
+    "WATCH",
+    "RING",
+    "NECKLACE",
+    "BRACELET",
+    "EARRINGS",
+    "CROWN",
+    "MASK",
+    "RAINCOAT",
+
+    /* ---------- PLACES / BUILDINGS ---------- */
+
+    "HOUSE",
+    "SCHOOL",
+    "HOSPITAL",
+    "BANK",
+    "HOTEL",
+    "RESTAURANT",
+    "CAFE",
+    "LIBRARY",
+    "MUSEUM",
+    "CINEMA",
+    "THEATER",
+    "STADIUM",
+    "PARK",
+    "PLAYGROUND",
+    "ZOO",
+    "AQUARIUM",
+    "AIRPORT",
+    "RAILWAY STATION",
+    "BUS STOP",
+    "TRAIN STATION",
+    "FIRE STATION",
+    "POLICE STATION",
+    "POST OFFICE",
+    "SUPERMARKET",
+    "SHOP",
+    "BAKERY",
+    "TEMPLE",
+    "CHURCH",
+    "MOSQUE",
+    "CASTLE",
+    "PALACE",
+    "LIGHTHOUSE",
+    "BRIDGE",
+    "TOWER",
+    "SKYSCRAPER",
+    "FACTORY",
+    "FARM",
+    "GARAGE",
+    "PET SHOP",
+    "BOOKSTORE",
+
+    /* ---------- NATURE ---------- */
+
+    "TREE",
+    "FLOWER",
+    "GRASS",
+    "BUSH",
+    "FOREST",
+    "MOUNTAIN",
+    "HILL",
+    "VOLCANO",
+    "RIVER",
+    "LAKE",
+    "WATERFALL",
+    "OCEAN",
+    "BEACH",
+    "ISLAND",
+    "CAVE",
+    "DESERT",
+    "PALM TREE",
+    "CACTUS",
+    "MUSHROOM",
+    "SUN",
+    "MOON",
+    "STAR",
+    "CLOUD",
+    "RAIN",
+    "RAINBOW",
+    "SNOW",
+    "LIGHTNING",
+    "TORNADO",
+    "WIND",
+    "WAVE",
+    "LEAF",
+    "PINE TREE",
+    "SUNFLOWER",
+    "ROSE",
+    "LOTUS",
+    "DAISY",
+    "TULIP",
+    "CACTUS",
+    "VINE",
+    "SEASHELL",
+
+    /* ---------- SPACE ---------- */
+
+    "SUN",
+    "MOON",
+    "EARTH",
+    "MARS",
+    "JUPITER",
+    "SATURN",
+    "PLANET",
+    "STAR",
+    "ASTRONAUT",
+    "ALIEN",
+    "ROCKET",
+    "SPACESHIP",
+    "UFO",
+    "SATELLITE",
+    "TELESCOPE",
+    "COMET",
+    "METEOR",
+    "ASTEROID",
+    "GALAXY",
+    "MOON LANDING",
+    "SPACE STATION",
+    "BLACK HOLE",
+
+    /* ---------- TOOLS ---------- */
+
+    "HAMMER",
+    "SCREWDRIVER",
+    "WRENCH",
+    "PLIERS",
+    "SAW",
+    "DRILL",
+    "AXE",
+    "SHOVEL",
+    "RAKE",
+    "HOE",
+    "LADDER",
+    "ROPE",
+    "CHAIN",
+    "NAIL",
+    "SCREW",
+    "BOLT",
+    "TOOLBOX",
+    "MEASURING TAPE",
+    "FLASHLIGHT",
+    "WORK GLOVES",
+    "WHEELBARROW",
+    "PAINT ROLLER",
+    "PAINTBRUSH",
+    "BUCKET",
+    "HAMMER AND NAIL",
+
+    /* ---------- BODY / HEALTH ---------- */
+
+    "HAND",
+    "FOOT",
+    "EYE",
+    "EAR",
+    "NOSE",
+    "MOUTH",
+    "TOOTH",
+    "HEART",
+    "BRAIN",
+    "BONE",
+    "HAIR",
+    "MUSTACHE",
+    "BEARD",
+    "FINGER",
+    "THUMB",
+    "ARM",
+    "LEG",
+    "KNEE",
+    "ELBOW",
+    "DOCTOR",
+    "NURSE",
+    "STETHOSCOPE",
+    "BANDAGE",
+    "THERMOMETER",
+    "MEDICINE",
+    "FIRST AID KIT",
+    "WHEELCHAIR",
+    "CRUTCH",
+    "AMBULANCE",
+    "HOSPITAL BED",
+
+    /* ---------- PEOPLE / PROFESSIONS ---------- */
+
+    "TEACHER",
+    "STUDENT",
+    "DOCTOR",
+    "NURSE",
+    "POLICE OFFICER",
+    "FIREFIGHTER",
+    "CHEF",
+    "FARMER",
+    "PILOT",
+    "DRIVER",
+    "SOLDIER",
+    "ASTRONAUT",
+    "ARTIST",
+    "SINGER",
+    "DANCER",
+    "ACTOR",
+    "PHOTOGRAPHER",
+    "ENGINEER",
+    "SCIENTIST",
+    "BUILDER",
+    "CARPENTER",
+    "PLUMBER",
+    "ELECTRICIAN",
+    "BARBER",
+    "BAKER",
+    "FISHERMAN",
+    "SAILOR",
+    "MAILMAN",
+    "JUDGE",
+    "DETECTIVE",
+    "MAGICIAN",
+    "CLOWN",
+    "PRINCESS",
+    "KING",
+    "QUEEN",
+    "PIRATE",
+    "NINJA",
+    "SUPERHERO",
+
+    /* ---------- FUN / TOYS ---------- */
+
+    "BALL",
+    "TEDDY BEAR",
+    "DOLL",
+    "TOY CAR",
+    "YO-YO",
+    "KITE",
+    "ROBOT",
+    "PUZZLE",
+    "DICE",
+    "DOMINO",
+    "CHESS PIECE",
+    "CARROM BOARD",
+    "PLAYING CARDS",
+    "SPINNING TOP",
+    "TOY TRAIN",
+    "TOY GUN",
+    "BUBBLES",
+    "BALLOON",
+    "YO-YO",
+    "MARBLE",
+    "SLIME",
+    "LEGO",
+    "BUILDING BLOCKS",
+    "JIGSAW PUZZLE",
+    "BOARD GAME",
+    "GAME CONTROLLER",
+    "TAMBourINE",
+    "KICK SCOOTER",
+    "ROLLER SKATES",
+    "SWING",
+
+    /* ---------- FESTIVAL / CELEBRATION ---------- */
+
+    "BIRTHDAY CAKE",
+    "BIRTHDAY CANDLE",
+    "BALLOON",
+    "GIFT",
+    "PRESENT",
+    "PARTY HAT",
+    "CONFETTI",
+    "FIREWORK",
+    "CHRISTMAS TREE",
+    "SANTA CLAUS",
+    "SNOWMAN",
+    "CHRISTMAS STOCKING",
+    "DIYA",
+    "LANTERN",
+    "CANDLE",
+    "GARLAND",
+    "FLOWER GARLAND",
+    "DRUM",
+    "MASK",
+    "PARTY POPPER",
+    "INVITATION",
+    "WEDDING RING",
+    "WEDDING CAKE",
+    "BOUQUET",
+    "UMBRELLA",
+    "PARADE",
+
+    /* ---------- EVERYDAY OBJECTS ---------- */
+
+    "KEY",
+    "LOCK",
+    "WALLET",
+    "PURSE",
+    "BACKPACK",
+    "SUITCASE",
+    "BAG",
+    "BOTTLE",
+    "GLASS",
+    "MUG",
+    "PLATE",
+    "BOWL",
+    "SPOON",
+    "FORK",
+    "KNIFE",
+    "NAPKIN",
+    "TISSUE",
+    "TOOTHBRUSH",
+    "TOOTHPASTE",
+    "SOAP",
+    "COMB",
+    "MIRROR",
+    "WATCH",
+    "PHONE",
+    "CHARGER",
+    "CABLE",
+    "REMOTE",
+    "CLOCK",
+    "CALENDAR",
+    "NEWSPAPER",
+    "MAGAZINE",
+    "BOOK",
+    "PEN",
+    "PENCIL",
+    "ERASER",
+    "RULER",
+    "SCISSORS",
+    "GLUE",
+    "TAPE",
+    "BOX",
+    "BAG",
+    "BASKET",
+    "BELL",
+    "WHISTLE",
+    "CANDLE",
+    "MATCHBOX",
+    "COIN",
+    "MONEY",
+    "CREDIT CARD",
+    "PASSPORT",
+
+    /* ---------- ACTIONS / ACTIVITIES ---------- */
+
+    "RUNNING",
+    "WALKING",
+    "JUMPING",
+    "SWIMMING",
+    "DANCING",
+    "SINGING",
+    "COOKING",
+    "READING",
+    "WRITING",
+    "DRAWING",
+    "PAINTING",
+    "SLEEPING",
+    "EATING",
+    "DRINKING",
+    "FISHING",
+    "CAMPING",
+    "HIKING",
+    "CYCLING",
+    "DRIVING",
+    "FLYING",
+    "SAILING",
+    "SKATING",
+    "SKIING",
+    "SURFING",
+    "SHOPPING",
+    "TEACHING",
+    "STUDYING",
+    "PLAYING",
+    "WATCHING TV",
+    "TAKING PHOTO",
+    "MAKING MUSIC",
+    "PLAYING CRICKET",
+    "PLAYING FOOTBALL",
+    "PLAYING TENNIS",
+    "FLYING KITE",
+    "RIDING BICYCLE",
+    "RIDING HORSE",
+    "CLIMBING",
+    "COOKING FOOD",
+    "WASHING CLOTHES",
+
+    /* ---------- OBJECT COMBINATIONS ---------- */
+
+    "TREASURE CHEST",
+    "SCHOOL BUS",
+    "ICE CREAM TRUCK",
+    "FIRE TRUCK",
+    "POLICE CAR",
+    "RACE TRACK",
+    "CAMPFIRE",
+    "TENT",
+    "SLEEPING BAG",
+    "PICNIC BASKET",
+    "BEACH BALL",
+    "SAND CASTLE",
+    "SNOWMAN",
+    "TREE HOUSE",
+    "BIRD HOUSE",
+    "DOG HOUSE",
+    "MAILBOX",
+    "TRAFFIC LIGHT",
+    "STOP SIGN",
+    "ROAD SIGN",
+    "PARK BENCH",
+    "FOUNTAIN",
+    "SWIMMING POOL",
+    "DIVING BOARD",
+    "PLAYGROUND",
+    "SLIDE",
+    "SWING SET",
+    "MERRY-GO-ROUND",
+    "FERRIS WHEEL",
+    "ROLLER COASTER",
+    "CIRCUS TENT",
+    "CIRCUS ELEPHANT",
+    "MAGIC WAND",
+    "PIRATE SHIP",
+    "TREASURE MAP",
+    "SWORD",
+    "SHIELD",
+    "CROWN",
+    "CASTLE TOWER",
+    "DRAWBRIDGE",
+    "DRAGON",
+    "UNICORN",
+    "MERMAID",
+    "FAIRY",
+    "GHOST",
+    "VAMPIRE",
+    "WITCH",
+    "WIZARD",
+
+    /* ---------- MORE EASY DRAWABLE WORDS ---------- */
+
+    "ANCHOR",
+    "BELL",
+    "BINOCULARS",
+    "BOW",
+    "ARROW",
+    "COMPASS",
+    "FLAG",
+    "GLOBE",
+    "MAP",
+    "TELESCOPE",
+    "MAGNIFYING GLASS",
+    "HOURGLASS",
+    "SCALE",
+    "THERMOMETER",
+    "MAGNET",
+    "LIGHTHOUSE",
+    "WHEEL",
+    "TIRE",
+    "ENGINE",
+    "STEERING WHEEL",
+    "BRAKE",
+    "PEDAL",
+    "LICENSE PLATE",
+    "TRAFFIC CONE",
+    "ROAD",
+    "HIGHWAY",
+    "TUNNEL",
+    "BRIDGE",
+    "STAIRS",
+    "ESCALATOR",
+    "ELEVATOR",
+    "DOOR BELL",
+    "KEYBOARD KEY",
+    "COMPUTER SCREEN",
+    "PHONE SCREEN",
+    "CAMERA LENS",
+    "PHOTO",
+    "VIDEO CAMERA",
+    "TRIPOD",
+    "BATTERY",
+    "PLUG",
+    "SOCKET",
+    "SWITCH",
+    "LIGHT SWITCH",
+    "FAN",
+    "CEILING FAN",
+    "TABLE FAN",
+    "AIR CONDITIONER",
+    "HEATER",
+    "FIREPLACE",
+    "CHIMNEY",
+
+    /* ---------- FINAL EXTRA WORDS ---------- */
+
+    "CLOUD",
+    "SUNGLASSES",
+    "RAIN BOOTS",
+    "RAINBOW",
+    "SNOWFLAKE",
+    "SNOWMAN",
+    "RAINDROP",
+    "THUNDER",
+    "LIGHTNING",
+    "TORNADO",
+    "VOLCANO",
+    "EARTHQUAKE",
+    "WAVE",
+    "ISLAND",
+    "SHIPWRECK",
+    "PIRATE",
+    "TREASURE",
+    "GOLD COIN",
+    "DIAMOND",
+    "RUBY",
+    "EMERALD",
+    "PEARL",
+    "RING",
+    "CROWN",
+    "NECKLACE",
+    "BRACELET",
+    "KEY",
+    "LOCK",
+    "CHEST",
+    "ROPE",
+    "LADDER",
+    "HAMMOCK",
+    "TENT",
+    "CAMPFIRE",
+    "TORCH",
+    "CAMPING BAG",
+    "BINOCULARS",
+    "COMPASS",
+    "MAP",
+    "MOUNTAIN CLIMBER",
+    "HIKER",
+    "FISHING ROD",
+    "FISHING BOAT",
+    "FISH",
+    "FISHING NET",
+    "SEASHELL",
+    "STARFISH",
+    "JELLYFISH",
+    "CORAL",
+    "PALM TREE",
+    "BEACH UMBRELLA",
+    "BEACH CHAIR",
+    "SANDCASTLE",
+    "BEACH TOWEL",
+    "SURFBOARD",
+    "SWIMMER",
+    "LIFEGUARD",
+    "LIFEBUOY",
+    "LIFE JACKET",
+    "DIVING MASK",
+    "SNORKEL",
+    "FLIPPERS",
+    "UNDERWATER CAMERA",
+    "SUBMARINE",
+    "TREASURE CHEST",
+    "MERMAID",
+    "OCTOPUS",
+    "SHARK",
+    "WHALE",
+    "DOLPHIN",
+    "SEAL",
+    "TURTLE",
+    "CRAB",
+    "LOBSTER",
+    "SEAHORSE",
+    "STARFISH",
+    "JELLYFISH",
+    "ANCHOR",
+    "SAIL",
+    "PIRATE FLAG",
+    "SHIP",
+    "LIGHTHOUSE",
+    "DOCK",
+    "HARBOR",
+    "BOAT",
+    "CANOE",
+    "KAYAK",
+    "YACHT",
+    "FERRY",
+    "SAILOR",
+    "CAPTAIN",
+    "LIFEBOAT",
+    "BUOY",
+    "OAR",
+    "PADDLE",
+    "FISHING ROD",
+    "NET",
+    "HOOK",
+    "WORM",
+    "BAIT",
+    "FISH",
+    "AQUARIUM",
+    "FISHBOWL",
+    "GOLDFISH",
+    "SEAWEED",
+    "CORAL REEF",
+    "DIVING SUIT",
+    "DIVING HELMET",
+    "UNDERWATER CAMERA",
+    "SCUBA DIVER"
+];
 
 
 /* =========================================================
@@ -127,7 +1204,6 @@ const CATEGORIES = {
 
 let players = [];
 
-let selectedCategory = "";
 let secretWord = "";
 let traitorIndex = -1;
 
@@ -171,16 +1247,14 @@ const screens = {
     final: document.getElementById("finalScreen")
 };
 
-const playerInputs = document.getElementById("playerInputs");
+const playerInputs =
+    document.getElementById("playerInputs");
 
 const addPlayerBtn =
     document.getElementById("addPlayerBtn");
 
 const startGameBtn =
     document.getElementById("startGameBtn");
-
-const categoryGrid =
-    document.getElementById("categoryGrid");
 
 const revealBtn =
     document.getElementById("revealBtn");
@@ -297,25 +1371,12 @@ function showScreen(screenName) {
 ========================================================= */
 
 function randomItem(array) {
+
     return array[
-        Math.floor(Math.random() * array.length)
+        Math.floor(
+            Math.random() * array.length
+        )
     ];
-}
-
-function shuffle(array) {
-
-    const copy = [...array];
-
-    for (let i = copy.length - 1; i > 0; i--) {
-
-        const j =
-            Math.floor(Math.random() * (i + 1));
-
-        [copy[i], copy[j]] =
-            [copy[j], copy[i]];
-    }
-
-    return copy;
 }
 
 
@@ -382,7 +1443,9 @@ addPlayerBtn.addEventListener(
     "click",
     () => {
 
-        if (playerInputs.children.length < 10) {
+        if (
+            playerInputs.children.length < 10
+        ) {
             createPlayerInput();
         }
 
@@ -407,80 +1470,55 @@ function startGame() {
     const inputs =
         playerInputs.querySelectorAll("input");
 
-    inputs.forEach((input, index) => {
+    inputs.forEach(
+        (input, index) => {
 
-        const name =
-            input.value.trim() ||
-            `Player ${index + 1}`;
+            const name =
+                input.value.trim() ||
+                `Player ${index + 1}`;
 
-        players.push({
-            name,
-            color: COLORS[index],
-            votes: 0
-        });
+            players.push({
+                name: name,
+                color: COLORS[index],
+                votes: 0
+            });
 
-    });
+        }
+    );
+
+    /*
+       Random Traitor
+    */
 
     traitorIndex =
         Math.floor(
-            Math.random() * players.length
+            Math.random() *
+            players.length
         );
 
-    votes =
-        new Array(players.length).fill(null);
-
-    identityIndex = 0;
-
-    renderCategories();
-
-    showScreen("category");
-}
-
-
-/* =========================================================
-   CATEGORY SELECTION
-========================================================= */
-
-function renderCategories() {
-
-    categoryGrid.innerHTML = "";
-
-    const categories =
-        shuffle(Object.keys(CATEGORIES));
-
-    categories.forEach(category => {
-
-        const button =
-            document.createElement("button");
-
-        button.className = "category-btn";
-
-        button.innerHTML = `
-            <span>${CATEGORIES[category].icon}</span>
-            ${category}
-        `;
-
-        button.addEventListener(
-            "click",
-            () => selectCategory(category)
-        );
-
-        categoryGrid.appendChild(button);
-
-    });
-}
-
-
-function selectCategory(category) {
-
-    selectedCategory = category;
+    /*
+       Random secret word
+       from the complete 1000-word pool
+    */
 
     secretWord =
-        randomItem(
-            CATEGORIES[category].words
-        );
+        randomItem(WORDS);
+
+    /*
+       Reset voting
+    */
+
+    votes =
+        new Array(
+            players.length
+        ).fill(null);
 
     identityIndex = 0;
+
+    /*
+       IMPORTANT:
+       Category screen is completely skipped.
+    */
 
     setupIdentityScreen();
 
@@ -509,7 +1547,9 @@ function setupIdentityScreen() {
     revealBtn.style.display =
         "block";
 
-    identityReveal.classList.add("hidden");
+    identityReveal.classList.add(
+        "hidden"
+    );
 
     identityContent.innerHTML = "";
 }
@@ -543,13 +1583,13 @@ function revealIdentity() {
                 </strong>
 
                 <p>
-                    Topic:
-                    <b>${selectedCategory}</b>
+                    You do NOT know the secret word.
                 </p>
 
                 <p class="muted">
-                    You do not know the secret word.
-                    Study the drawing carefully.
+                    Watch the drawing carefully,
+                    figure out what everyone is drawing,
+                    and avoid getting caught.
                 </p>
 
             </div>
@@ -590,7 +1630,10 @@ function nextIdentityPlayer() {
 
     identityIndex++;
 
-    if (identityIndex >= players.length) {
+    if (
+        identityIndex >=
+        players.length
+    ) {
 
         startDrawingPhase();
 
@@ -603,7 +1646,7 @@ function nextIdentityPlayer() {
 
 
 /* =========================================================
-   CANVAS INITIALIZATION
+   CANVAS
 ========================================================= */
 
 canvas =
@@ -712,15 +1755,18 @@ function startDrawingPhase() {
 
     showScreen("drawing");
 
-    setTimeout(() => {
+    setTimeout(
+        () => {
 
-        resizeCanvas();
+            resizeCanvas();
 
-        clearCanvas();
+            clearCanvas();
 
-        startPlayerTurn();
+            startPlayerTurn();
 
-    }, 100);
+        },
+        100
+    );
 }
 
 
@@ -731,7 +1777,14 @@ function clearCanvas() {
 
     ctx.save();
 
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.setTransform(
+        1,
+        0,
+        0,
+        1,
+        0,
+        0
+    );
 
     ctx.clearRect(
         0,
@@ -804,22 +1857,27 @@ function startTimer() {
     clearTimer();
 
     timerInterval =
-        setInterval(() => {
+        setInterval(
+            () => {
 
-            timerValue--;
+                timerValue--;
 
-            timerDisplay.textContent =
-                timerValue;
+                timerDisplay.textContent =
+                    timerValue;
 
-            if (timerValue <= 0) {
+                if (
+                    timerValue <= 0
+                ) {
 
-                clearTimer();
+                    clearTimer();
 
-                endPlayerTurn();
+                    endPlayerTurn();
 
-            }
+                }
 
-        }, 1000);
+            },
+            1000
+        );
 }
 
 
@@ -827,7 +1885,9 @@ function clearTimer() {
 
     if (timerInterval) {
 
-        clearInterval(timerInterval);
+        clearInterval(
+            timerInterval
+        );
 
         timerInterval = null;
     }
@@ -835,7 +1895,7 @@ function clearTimer() {
 
 
 /* =========================================================
-   CANVAS DRAWING
+   DRAWING
 ========================================================= */
 
 function getPointerPosition(event) {
@@ -844,11 +1904,15 @@ function getPointerPosition(event) {
         canvas.getBoundingClientRect();
 
     return {
+
         x:
-            event.clientX - rect.left,
+            event.clientX -
+            rect.left,
 
         y:
-            event.clientY - rect.top
+            event.clientY -
+            rect.top
+
     };
 }
 
@@ -865,6 +1929,7 @@ canvas.addEventListener(
         }
 
         isDrawing = true;
+
         currentStrokeStarted = true;
 
         canvas.setPointerCapture(
@@ -882,7 +1947,9 @@ canvas.addEventListener(
         );
 
         ctx.strokeStyle =
-            players[currentPlayerIndex].color;
+            players[
+                currentPlayerIndex
+            ].color;
 
         ctx.lineWidth = 7;
 
@@ -929,9 +1996,11 @@ canvas.addEventListener(
         strokeFinished = true;
 
         try {
+
             canvas.releasePointerCapture(
                 event.pointerId
             );
+
         } catch (_) {}
 
         endPlayerTurn();
@@ -959,7 +2028,7 @@ canvas.addEventListener(
 
 
 /* =========================================================
-   END DRAWING TURN
+   END PLAYER TURN
 ========================================================= */
 
 function endPlayerTurn() {
@@ -986,7 +2055,9 @@ function advanceDrawingTurn() {
 
         currentPlayerIndex = 0;
 
-        if (currentRound === 1) {
+        if (
+            currentRound === 1
+        ) {
 
             currentRound = 2;
 
@@ -1019,7 +2090,19 @@ function startVotingPhase() {
     currentVoteIndex = 0;
 
     votes =
-        new Array(players.length).fill(null);
+        new Array(
+            players.length
+        ).fill(null);
+
+    /*
+       Reset vote counters
+    */
+
+    players.forEach(
+        player => {
+            player.votes = 0;
+        }
+    );
 
     setupVotePassScreen();
 
@@ -1078,14 +2161,21 @@ function renderVoteOptions() {
     players.forEach(
         (player, index) => {
 
+            /*
+               Cannot vote for yourself
+            */
+
             if (
-                index === currentVoteIndex
+                index ===
+                currentVoteIndex
             ) {
                 return;
             }
 
             const button =
-                document.createElement("button");
+                document.createElement(
+                    "button"
+                );
 
             button.className =
                 "vote-option";
@@ -1107,7 +2197,8 @@ function renderVoteOptions() {
                 "click",
                 () => {
 
-                    selectedVote = index;
+                    selectedVote =
+                        index;
 
                     document
                         .querySelectorAll(
@@ -1115,9 +2206,10 @@ function renderVoteOptions() {
                         )
                         .forEach(
                             option =>
-                                option.classList.remove(
-                                    "selected"
-                                )
+                                option.classList
+                                    .remove(
+                                        "selected"
+                                    )
                         );
 
                     button.classList.add(
@@ -1151,14 +2243,19 @@ submitVoteBtn.addEventListener(
 
 function submitVote() {
 
-    if (selectedVote === null) {
+    if (
+        selectedVote === null
+    ) {
         return;
     }
 
-    votes[currentVoteIndex] =
-        selectedVote;
+    votes[
+        currentVoteIndex
+    ] = selectedVote;
 
-    players[selectedVote].votes++;
+    players[
+        selectedVote
+    ].votes++;
 
     currentVoteIndex++;
 
@@ -1197,20 +2294,25 @@ function renderResults() {
 
     const sortedPlayers =
         players
-            .map((player, index) => ({
-                ...player,
-                index
-            }))
+            .map(
+                (player, index) => ({
+                    ...player,
+                    index
+                })
+            )
             .sort(
                 (a, b) =>
-                    b.votes - a.votes
+                    b.votes -
+                    a.votes
             );
 
     sortedPlayers.forEach(
         (player, position) => {
 
             const row =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
             row.className =
                 "result-row";
@@ -1236,7 +2338,9 @@ function renderResults() {
                 </div>
             `;
 
-            resultsList.appendChild(row);
+            resultsList.appendChild(
+                row
+            );
 
         }
     );
@@ -1245,9 +2349,15 @@ function renderResults() {
     const highestVotes =
         Math.max(
             ...players.map(
-                player => player.votes
+                player =>
+                    player.votes
             )
         );
+
+    /*
+       Strict majority:
+       more than half of all players
+    */
 
     const majority =
         players.length / 2;
@@ -1260,16 +2370,26 @@ function renderResults() {
         );
 
     const hasMajority =
-        highestVotes > majority;
+        highestVotes >
+        majority;
+
+    /*
+       The Traitor must be the ONLY
+       player with the majority.
+    */
 
     const traitorHasMajority =
         hasMajority &&
         topPlayers.length === 1 &&
-        players[traitorIndex].votes ===
+        players[
+            traitorIndex
+        ].votes ===
             highestVotes;
 
 
-    if (traitorHasMajority) {
+    if (
+        traitorHasMajority
+    ) {
 
         finalResult =
             "traitor-caught";
@@ -1280,8 +2400,8 @@ function renderResults() {
             </strong>
 
             <p class="muted">
-                But the Traitor gets one final chance
-                to guess the secret word.
+                But the Traitor gets one final
+                chance to guess the secret word.
             </p>
         `;
 
@@ -1317,7 +2437,6 @@ function renderResults() {
         }
 
     }
-
 }
 
 
@@ -1334,7 +2453,9 @@ continueResultsBtn.addEventListener(
             "traitor-caught"
         ) {
 
-            showScreen("traitorGuess");
+            showScreen(
+                "traitorGuess"
+            );
 
         } else {
 
@@ -1350,7 +2471,7 @@ continueResultsBtn.addEventListener(
 
 
 /* =========================================================
-   TRAITOR GUESS
+   TRAITOR FINAL GUESS
 ========================================================= */
 
 showGuessInputBtn.addEventListener(
@@ -1380,8 +2501,13 @@ guessInput.addEventListener(
     "keydown",
     event => {
 
-        if (event.key === "Enter") {
+        if (
+            event.key ===
+            "Enter"
+        ) {
+
             submitTraitorGuess();
+
         }
 
     }
@@ -1418,7 +2544,6 @@ function submitTraitorGuess() {
         );
 
     }
-
 }
 
 
@@ -1435,7 +2560,9 @@ function showFinalScreen(
         secretWord;
 
     finalTraitor.textContent =
-        players[traitorIndex].name;
+        players[
+            traitorIndex
+        ].name;
 
     finalMessage.textContent =
         message;
@@ -1472,13 +2599,14 @@ newGameBtn.addEventListener(
 
         players = [];
 
-        selectedCategory = "";
         secretWord = "";
+
         traitorIndex = -1;
 
         identityIndex = 0;
 
         currentRound = 1;
+
         currentPlayerIndex = 0;
 
         currentVoteIndex = 0;
@@ -1489,11 +2617,28 @@ newGameBtn.addEventListener(
 
         clearTimer();
 
+        guessInput.value = "";
+
+        guessArea.classList.add(
+            "hidden"
+        );
+
+        showGuessInputBtn.style.display =
+            "block";
+
         playerInputs.innerHTML = "";
 
-        createPlayerInput("Player 1");
-        createPlayerInput("Player 2");
-        createPlayerInput("Player 3");
+        createPlayerInput(
+            "Player 1"
+        );
+
+        createPlayerInput(
+            "Player 2"
+        );
+
+        createPlayerInput(
+            "Player 3"
+        );
 
         showScreen("setup");
 
@@ -1502,7 +2647,7 @@ newGameBtn.addEventListener(
 
 
 /* =========================================================
-   PREVENT ACCIDENTAL PAGE SCROLL WHILE DRAWING
+   PREVENT PAGE SCROLL DURING DRAWING
 ========================================================= */
 
 document.addEventListener(
@@ -1516,13 +2661,18 @@ document.addEventListener(
         ) {
 
             if (
-                event.target === canvas
+                event.target ===
+                canvas
             ) {
+
                 event.preventDefault();
+
             }
 
         }
 
     },
-    { passive: false }
+    {
+        passive: false
+    }
 );
