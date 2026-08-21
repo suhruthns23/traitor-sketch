@@ -1,15 +1,14 @@
 /* =========================================================
    TRAITOR SKETCH
-   LOCAL SINGLE-DEVICE PASS-THE-PHONE GAME
+   FINAL VERSION
 
-   VERSION:
-   - No categories
-   - 1000-word master pool
-   - 3-10 players
-   - 2 drawing rounds
-   - 15 seconds per stroke
-   - Private pass-the-phone voting
-   - Traitor final guess
+   3-10 PLAYERS
+   3 ROUNDS
+   20 SECONDS / TURN
+   NO ONE-STROKE LIMIT
+   DONE & PASS
+   3 SECOND PASS BUFFER
+   TOPIC HINT FOR TRAITOR
 ========================================================= */
 
 
@@ -18,1184 +17,176 @@
 ========================================================= */
 
 const COLORS = [
-    "#ef4444", // Red
-    "#3b82f6", // Blue
-    "#22c55e", // Green
-    "#eab308", // Yellow
-    "#a855f7", // Purple
-    "#f97316", // Orange
-    "#06b6d4", // Cyan
-    "#ec4899", // Pink
-    "#14b8a6", // Teal
-    "#8b5cf6"  // Violet
+    "#ef4444",
+    "#3b82f6",
+    "#22c55e",
+    "#eab308",
+    "#a855f7",
+    "#f97316",
+    "#06b6d4",
+    "#ec4899",
+    "#14b8a6",
+    "#8b5cf6"
 ];
 
 
 /* =========================================================
-   1000 DRAWABLE WORDS
+   WORD DATABASE
+   Compact comma-separated format
 ========================================================= */
 
-const WORDS = [
+const WORDS = {
 
-    /* ---------- ANIMALS ---------- */
+    Animals: [
+        "Lion","Tiger","Elephant","Giraffe","Zebra","Horse","Cow","Goat","Sheep","Pig",
+        "Dog","Cat","Rabbit","Mouse","Rat","Monkey","Gorilla","Panda","Koala","Kangaroo",
+        "Bear","Polar Bear","Fox","Wolf","Deer","Buffalo","Camel","Donkey","Leopard","Cheetah",
+        "Jaguar","Hippopotamus","Rhinoceros","Crocodile","Alligator","Snake","Lizard","Frog","Turtle","Tortoise",
+        "Penguin","Parrot","Eagle","Owl","Crow","Pigeon","Peacock","Swan","Flamingo","Ostrich",
+        "Bat","Squirrel","Hedgehog","Porcupine","Beaver","Otter","Dolphin","Whale","Shark","Octopus",
+        "Crab","Lobster","Jellyfish","Seahorse","Starfish","Snail","Butterfly","Bee","Ant","Spider",
+        "Mosquito","Dragonfly","Beetle","Chicken","Rooster","Duck","Goose","Turkey","Seal","Walrus",
+        "Hyena","Moose","Reindeer","Llama","Alpaca","Meerkat","Chameleon","Iguana","Dinosaur","Scorpion"
+    ],
 
-    "CAT",
-    "DOG",
-    "LION",
-    "TIGER",
-    "ELEPHANT",
-    "GIRAFFE",
-    "ZEBRA",
-    "HORSE",
-    "COW",
-    "GOAT",
-    "SHEEP",
-    "PIG",
-    "CHICKEN",
-    "ROOSTER",
-    "DUCK",
-    "GOOSE",
-    "TURKEY",
-    "RABBIT",
-    "MOUSE",
-    "RAT",
-    "HAMSTER",
-    "SQUIRREL",
-    "MONKEY",
-    "GORILLA",
-    "CHIMPANZEE",
-    "BEAR",
-    "POLAR BEAR",
-    "PANDA",
-    "KOALA",
-    "KANGAROO",
-    "DEER",
-    "BUFFALO",
-    "CAMEL",
-    "DONKEY",
-    "FOX",
-    "WOLF",
-    "LEOPARD",
-    "CHEETAH",
-    "JAGUAR",
-    "HYENA",
-    "PENGUIN",
-    "SEAL",
-    "WALRUS",
-    "OTTER",
-    "DOLPHIN",
-    "WHALE",
-    "SHARK",
-    "OCTOPUS",
-    "SQUID",
-    "CRAB",
-    "LOBSTER",
-    "TURTLE",
-    "CROCODILE",
-    "ALLIGATOR",
-    "SNAKE",
-    "LIZARD",
-    "FROG",
-    "TOAD",
-    "SNAIL",
-    "BUTTERFLY",
-    "BEE",
-    "ANT",
-    "SPIDER",
-    "MOSQUITO",
-    "DRAGONFLY",
-    "BEETLE",
-    "PARROT",
-    "EAGLE",
-    "OWL",
-    "CROW",
-    "PIGEON",
-    "PEACOCK",
-    "SWAN",
-    "FLAMINGO",
-    "OSTRICH",
-    "WOODPECKER",
-    "SEAGULL",
-    "BAT",
-    "HEDGEHOG",
-    "PORCUPINE",
-    "HIPPOPOTAMUS",
-    "RHINOCEROS",
-    "GORILLA",
-    "CAMEL",
-    "LLAMA",
-    "ALPACA",
-    "DONKEY",
-    "MOOSE",
-    "REINDEER",
-    "BEAVER",
-    "SKUNK",
-    "MEERKAT",
-    "CHEETAH",
-    "CHAMELEON",
-    "IGUANA",
-    "DINOSAUR",
+    Fruits: [
+        "Apple","Banana","Mango","Orange","Grapes","Watermelon","Pineapple","Papaya","Guava","Strawberry",
+        "Blueberry","Raspberry","Blackberry","Cherry","Peach","Pear","Plum","Kiwi","Lemon","Lime",
+        "Coconut","Avocado","Pomegranate","Fig","Date","Apricot","Melon","Lychee","Jackfruit","Dragon Fruit",
+        "Passion Fruit","Star Fruit","Grapefruit","Tangerine","Cranberry","Raisin","Olive","Tamarind","Custard Apple","Sapota",
+        "Jamun","Mulberry","Gooseberry","Persimmon","Nectarine","Quince","Durian","Rambutan","Longan","Musk Melon"
+    ],
 
-    /* ---------- FRUITS ---------- */
+    Vegetables: [
+        "Carrot","Potato","Onion","Tomato","Cabbage","Spinach","Beans","Peas","Pumpkin","Radish",
+        "Beetroot","Broccoli","Cauliflower","Cucumber","Brinjal","Ladyfinger","Capsicum","Chilli","Corn","Sweet Potato",
+        "Ginger","Garlic","Turnip","Lettuce","Celery","Mushroom","Bottle Gourd","Bitter Gourd","Ridge Gourd","Drumstick",
+        "Zucchini","Artichoke","Asparagus","Leek","Yam","Parsnip","Kale","Mint","Coriander","Curry Leaves"
+    ],
 
-    "APPLE",
-    "BANANA",
-    "MANGO",
-    "ORANGE",
-    "GRAPE",
-    "WATERMELON",
-    "PINEAPPLE",
-    "PAPAYA",
-    "GUAVA",
-    "STRAWBERRY",
-    "BLUEBERRY",
-    "RASPBERRY",
-    "BLACKBERRY",
-    "CHERRY",
-    "PEACH",
-    "PEAR",
-    "PLUM",
-    "KIWI",
-    "LEMON",
-    "LIME",
-    "COCONUT",
-    "AVOCADO",
-    "POMEGRANATE",
-    "FIG",
-    "DATE",
-    "APRICOT",
-    "MELON",
-    "CANTALOUPE",
-    "LYCHEE",
-    "JACKFRUIT",
-    "DRAGON FRUIT",
-    "PASSION FRUIT",
-    "STAR FRUIT",
-    "GRAPEFRUIT",
-    "TANGERINE",
-    "CRANBERRY",
-    "RAISIN",
-    "OLIVE",
-    "TAMARIND",
-    "CUSTARD APPLE",
-    "SAPOTA",
-    "JAMUN",
-    "MULBERRY",
-    "GOOSEBERRY",
-    "PERSIMMON",
-    "NECTARINE",
-    "QUINCE",
-    "DURIAN",
-    "LONGAN",
-    "RAMBUTAN",
+    Food: [
+        "Pizza","Burger","Sandwich","Hot Dog","Cake","Ice Cream","Cupcake","Donut","Cookie","Biscuit",
+        "Chocolate","Candy","Lollipop","Popcorn","Noodles","Pasta","Spaghetti","Lasagna","Fries","Pancake",
+        "Waffle","Omelette","Toast","Bread","Cheese","Butter","Yogurt","Rice","Dosa","Idli",
+        "Vada","Samosa","Paratha","Roti","Chapati","Biryani","Curry","Soup","Salad","Sushi",
+        "Taco","Burrito","Nachos","Pretzel","Muffin","Pie","Pudding","Jelly","Honey","Jam",
+        "Cereal","French Toast","Pasta Bowl","Fruit Salad","Donut","Pancakes","Fried Rice","Sandwich","Pav Bhaji","Noodles"
+    ],
 
-    /* ---------- VEGETABLES ---------- */
+    Drinks: [
+        "Water","Milk","Tea","Coffee","Juice","Lemonade","Milkshake","Smoothie","Hot Chocolate","Coconut Water",
+        "Soft Drink","Water Bottle","Tea Cup","Coffee Cup","Mocktail","Fruit Juice","Orange Juice","Apple Juice","Mango Juice","Milkshake",
+        "Coconut Drink","Lassi","Buttermilk","Soup","Energy Drink","Drink Can","Thermos","Flask","Straw","Cup"
+    ],
 
-    "CARROT",
-    "POTATO",
-    "ONION",
-    "TOMATO",
-    "CABBAGE",
-    "SPINACH",
-    "BEANS",
-    "PEAS",
-    "PUMPKIN",
-    "RADISH",
-    "BEETROOT",
-    "BROCCOLI",
-    "CAULIFLOWER",
-    "CUCUMBER",
-    "BRINJAL",
-    "EGGPLANT",
-    "LADYFINGER",
-    "CAPSICUM",
-    "CHILLI",
-    "CORN",
-    "SWEET POTATO",
-    "GINGER",
-    "GARLIC",
-    "TURNIP",
-    "LETTUCE",
-    "CELERY",
-    "MUSHROOM",
-    "BOTTLE GOURD",
-    "BITTER GOURD",
-    "RIDGE GOURD",
-    "DRUMSTICK",
-    "ZUCCHINI",
-    "ARTICHOKE",
-    "ASPARAGUS",
-    "LEEK",
-    "YAM",
-    "PARSNIP",
-    "KALE",
-    "MINT",
-    "CORIANDER",
+    Vehicles: [
+        "Car","Bus","Bicycle","Motorcycle","Scooter","Train","Truck","Van","Taxi","Ambulance",
+        "Fire Truck","Police Car","Tractor","Jeep","Race Car","Sports Car","Airplane","Helicopter","Rocket","Hot Air Balloon",
+        "Boat","Ship","Sailboat","Submarine","Canoe","Kayak","Yacht","Rickshaw","Auto Rickshaw","Metro",
+        "Tram","Bullet Train","School Bus","Ferry","Forklift","Dump Truck","Tow Truck","Cement Truck","Race Bike","Skateboard"
+    ],
 
-    /* ---------- FOOD ---------- */
+    Household: [
+        "Chair","Table","Sofa","Bed","Pillow","Blanket","Mattress","Mirror","Broom","Mop",
+        "Bucket","Dustbin","Lamp","Clock","Fan","Television","Remote","Curtain","Door","Window",
+        "Key","Lock","Hanger","Iron","Ironing Board","Vacuum Cleaner","Washing Machine","Refrigerator","Oven","Microwave",
+        "Toaster","Blender","Mixer","Kettle","Pan","Pot","Pressure Cooker","Bottle","Jar","Box",
+        "Basket","Vase","Candle","Plant Pot","Bookshelf","Drawer","Carpet","Rug","Doormat","Umbrella",
+        "Raincoat","Towel","Toothbrush","Toothpaste","Soap","Shampoo","Comb","Hairbrush","Perfume","Wallet",
+        "Purse","Backpack","Suitcase","Mug","Plate","Bowl","Spoon","Fork","Knife","Napkin"
+    ],
 
-    "PIZZA",
-    "BURGER",
-    "SANDWICH",
-    "HOT DOG",
-    "CAKE",
-    "ICE CREAM",
-    "CUPCAKE",
-    "DONUT",
-    "COOKIE",
-    "BISCUIT",
-    "CHOCOLATE",
-    "CANDY",
-    "LOLLIPOP",
-    "POPCORN",
-    "NOODLES",
-    "PASTA",
-    "SPAGHETTI",
-    "LASAGNA",
-    "FRIES",
-    "PANCAKE",
-    "WAFFLE",
-    "OMELETTE",
-    "TOAST",
-    "BREAD",
-    "CHEESE",
-    "BUTTER",
-    "YOGURT",
-    "RICE",
-    "DOSA",
-    "IDLI",
-    "VADA",
-    "SAMOSA",
-    "PARATHA",
-    "ROTI",
-    "CHAPATI",
-    "BIRYANI",
-    "CURRY",
-    "SOUP",
-    "SALAD",
-    "SUSHI",
-    "TACO",
-    "BURRITO",
-    "NACHOS",
-    "PRETZEL",
-    "MUFFIN",
-    "PIE",
-    "PUDDING",
-    "JELLY",
-    "HONEY",
-    "JAM",
-    "KETCHUP",
-    "MUSTARD",
-    "SAUCE",
-    "KETCHUP BOTTLE",
-    "CEREAL",
-    "SPOON",
-    "FORK",
-    "KNIFE",
-    "PLATE",
-    "BOWL",
-    "CUP",
+    School: [
+        "Book","Notebook","Pencil","Pen","Eraser","Ruler","Sharpener","Marker","Crayon","Paintbrush",
+        "Paint","Paper","Envelope","Stapler","Paper Clip","Scissors","Glue","Tape","Calculator","Desk",
+        "Blackboard","Whiteboard","Chalk","School Bag","School Bus","Computer","Laptop","Keyboard","Mouse","Printer",
+        "Monitor","Headphones","Microphone","Folder","File","Calendar","Diary","Sticker","Badge","ID Card",
+        "Certificate","Trophy","Compass","Geometry Box","Water Bottle","Lunch Box","School Bell","Uniform","Report Card","Globe"
+    ],
 
-    /* ---------- DRINKS ---------- */
+    Electronics: [
+        "Phone","Smartphone","Tablet","Laptop","Computer","Camera","Television","Radio","Speaker","Headphones",
+        "Earphones","Watch","Smartwatch","Remote Control","Game Controller","Keyboard","Mouse","Printer","Projector","Drone",
+        "Router","Charger","Battery","USB Drive","Memory Card","Power Bank","Light Bulb","Flashlight","Alarm Clock","Calculator",
+        "Microphone","Monitor","Camera Lens","Tripod","Cable","Plug","Socket","Game Console","TV Remote","Smart TV"
+    ],
 
-    "WATER",
-    "MILK",
-    "TEA",
-    "COFFEE",
-    "JUICE",
-    "LEMONADE",
-    "MILKSHAKE",
-    "SMOOTHIE",
-    "HOT CHOCOLATE",
-    "COCONUT WATER",
-    "SOFT DRINK",
-    "WATER BOTTLE",
-    "TEA CUP",
-    "COFFEE CUP",
-    "STRAW",
-    "THERMOS",
+    Sports: [
+        "Cricket","Football","Tennis","Basketball","Hockey","Badminton","Volleyball","Baseball","Golf","Boxing",
+        "Wrestling","Swimming","Running","Cycling","Skateboarding","Surfing","Skiing","Archery","Bowling","Table Tennis",
+        "Carrom","Chess","Kabaddi","Kho Kho","Rugby","Cricket Bat","Cricket Ball","Tennis Racket","Badminton Racket","Golf Club",
+        "Baseball Bat","Boxing Glove","Medal","Trophy","Whistle","Sports Shoes","Helmet","Stopwatch","Football Goal","Basketball Hoop",
+        "Swimming Pool","Golf Hole","Bowling Pin","Bowling Ball","Hockey Stick","Skateboard","Surfboard","Bicycle"
+    ],
 
-    /* ---------- HOUSEHOLD ITEMS ---------- */
+    Music: [
+        "Guitar","Piano","Drum","Violin","Flute","Trumpet","Saxophone","Harmonica","Tambourine","Bell",
+        "Harp","Cello","Microphone","Speaker","DJ Turntable","Music Note","Headphones","Drumstick","Concert Stage","Radio",
+        "Keyboard","Tabla","Cymbal","Xylophone","Maracas","Sitar","Recorder","Accordion","Music Stand","Guitar Pick"
+    ],
 
-    "CHAIR",
-    "TABLE",
-    "SOFA",
-    "BED",
-    "PILLOW",
-    "BLANKET",
-    "MATTRESS",
-    "MIRROR",
-    "BROOM",
-    "MOP",
-    "BUCKET",
-    "DUSTBIN",
-    "LAMP",
-    "CLOCK",
-    "FAN",
-    "TELEVISION",
-    "REMOTE",
-    "CURTAIN",
-    "DOOR",
-    "WINDOW",
-    "KEY",
-    "LOCK",
-    "HANGER",
-    "IRON",
-    "IRONING BOARD",
-    "VACUUM CLEANER",
-    "WASHING MACHINE",
-    "REFRIGERATOR",
-    "OVEN",
-    "MICROWAVE",
-    "TOASTER",
-    "BLENDER",
-    "MIXER",
-    "KETTLE",
-    "PAN",
-    "POT",
-    "PRESSURE COOKER",
-    "BOTTLE",
-    "JAR",
-    "BOX",
-    "BASKET",
-    "VASE",
-    "CANDLE",
-    "PLANT POT",
-    "BOOKSHELF",
-    "DRAWER",
-    "CARPET",
-    "RUG",
-    "DOORMAT",
-    "UMBRELLA",
-    "RAINCOAT",
-    "TOWEL",
-    "TOOTHBRUSH",
-    "TOOTHPASTE",
-    "SOAP",
-    "SHAMPOO",
-    "COMB",
-    "HAIRBRUSH",
-    "SCISSORS",
-    "NAIL CLIPPER",
-    "PERFUME",
-    "WALLET",
-    "PURSE",
-    "BACKPACK",
-    "SUITCASE",
+    Clothing: [
+        "Shirt","T-Shirt","Pants","Jeans","Shorts","Skirt","Dress","Jacket","Coat","Sweater",
+        "Hoodie","Tie","Bow Tie","Belt","Socks","Shoes","Sandals","Boots","Slippers","Hat",
+        "Cap","Helmet","Scarf","Gloves","Sunglasses","Glasses","Watch","Ring","Necklace","Bracelet",
+        "Earrings","Crown","Mask","Raincoat","Swimsuit","School Uniform","Suit","Tie","Backpack","Handbag"
+    ],
 
-    /* ---------- SCHOOL / OFFICE ---------- */
+    Places: [
+        "House","School","Hospital","Bank","Hotel","Restaurant","Cafe","Library","Museum","Cinema",
+        "Theater","Stadium","Park","Playground","Zoo","Aquarium","Airport","Railway Station","Bus Stop","Train Station",
+        "Fire Station","Police Station","Post Office","Supermarket","Shop","Bakery","Temple","Church","Mosque","Castle",
+        "Palace","Lighthouse","Bridge","Tower","Skyscraper","Factory","Farm","Garage","Pet Shop","Bookstore",
+        "Beach","Mountain","Camping Site","Amusement Park","Water Park","Gym","Office","College","University","Market"
+    ],
 
-    "BOOK",
-    "NOTEBOOK",
-    "PENCIL",
-    "PEN",
-    "ERASER",
-    "RULER",
-    "SHARPENER",
-    "MARKER",
-    "CRAYON",
-    "PAINTBRUSH",
-    "PAINT",
-    "PAPER",
-    "ENVELOPE",
-    "STAPLER",
-    "PAPER CLIP",
-    "SCISSORS",
-    "GLUE",
-    "TAPE",
-    "CALCULATOR",
-    "DESK",
-    "BLACKBOARD",
-    "WHITEBOARD",
-    "CHALK",
-    "SCHOOL BAG",
-    "SCHOOL BUS",
-    "COMPUTER",
-    "LAPTOP",
-    "KEYBOARD",
-    "MOUSE",
-    "PRINTER",
-    "MONITOR",
-    "HEADPHONES",
-    "MICROPHONE",
-    "FOLDER",
-    "FILE",
-    "CALENDAR",
-    "DIARY",
-    "STICKER",
-    "BADGE",
-    "ID CARD",
-    "CERTIFICATE",
-    "TROPHY",
+    Nature: [
+        "Tree","Flower","Grass","Bush","Forest","Mountain","Hill","Volcano","River","Lake",
+        "Waterfall","Ocean","Beach","Island","Cave","Desert","Palm Tree","Cactus","Mushroom","Sun",
+        "Moon","Star","Cloud","Rain","Rainbow","Snow","Lightning","Tornado","Wind","Wave",
+        "Leaf","Pine Tree","Sunflower","Rose","Lotus","Daisy","Tulip","Vine","Seashell","Snowflake",
+        "Raindrop","Thunder","River","Pond","Valley","Cliff","Rock","Stone","Garden","Water Lily"
+    ],
 
-    /* ---------- ELECTRONICS ---------- */
+    Space: [
+        "Sun","Moon","Earth","Mars","Jupiter","Saturn","Planet","Star","Astronaut","Alien",
+        "Rocket","Spaceship","UFO","Satellite","Telescope","Comet","Meteor","Asteroid","Galaxy","Moon Landing",
+        "Space Station","Black Hole","Space Suit","Planet Ring","Moon Rover","Alien Ship","Solar System","Earth Globe","Astronaut Helmet","Space Helmet"
+    ],
 
-    "PHONE",
-    "SMARTPHONE",
-    "TABLET",
-    "LAPTOP",
-    "COMPUTER",
-    "CAMERA",
-    "TELEVISION",
-    "RADIO",
-    "SPEAKER",
-    "HEADPHONES",
-    "EARPHONES",
-    "WATCH",
-    "SMARTWATCH",
-    "REMOTE CONTROL",
-    "GAME CONTROLLER",
-    "KEYBOARD",
-    "MOUSE",
-    "PRINTER",
-    "PROJECTOR",
-    "DRONE",
-    "ROUTER",
-    "CHARGER",
-    "BATTERY",
-    "USB DRIVE",
-    "MEMORY CARD",
-    "POWER BANK",
-    "LIGHT BULB",
-    "FLASHLIGHT",
-    "ALARM CLOCK",
-    "CALCULATOR",
+    Tools: [
+        "Hammer","Screwdriver","Wrench","Pliers","Saw","Drill","Axe","Shovel","Rake","Hoe",
+        "Ladder","Rope","Chain","Nail","Screw","Bolt","Toolbox","Measuring Tape","Flashlight","Work Gloves",
+        "Wheelbarrow","Paint Roller","Paintbrush","Bucket","Hammer and Nail","Spanner","Crowbar","Chisel","Clamp","Drill Machine"
+    ],
 
-    /* ---------- VEHICLES ---------- */
+    People: [
+        "Teacher","Student","Doctor","Nurse","Police Officer","Firefighter","Chef","Farmer","Pilot","Driver",
+        "Soldier","Astronaut","Artist","Singer","Dancer","Actor","Photographer","Engineer","Scientist","Builder",
+        "Carpenter","Plumber","Electrician","Barber","Baker","Fisherman","Sailor","Mailman","Judge","Detective",
+        "Magician","Clown","Princess","King","Queen","Pirate","Ninja","Superhero","Wizard","Witch"
+    ],
 
-    "CAR",
-    "BUS",
-    "BICYCLE",
-    "MOTORCYCLE",
-    "SCOOTER",
-    "TRAIN",
-    "TRUCK",
-    "VAN",
-    "TAXI",
-    "AMBULANCE",
-    "FIRE TRUCK",
-    "POLICE CAR",
-    "TRACTOR",
-    "JEEP",
-    "RACE CAR",
-    "SPORTS CAR",
-    "AIRPLANE",
-    "HELICOPTER",
-    "ROCKET",
-    "HOT AIR BALLOON",
-    "BOAT",
-    "SHIP",
-    "SAILBOAT",
-    "SUBMARINE",
-    "CANOE",
-    "KAYAK",
-    "YACHT",
-    "CART",
-    "RICKSHAW",
-    "AUTO RICKSHAW",
-    "METRO",
-    "TRAM",
-    "BULLET TRAIN",
-    "SCHOOL BUS",
-    "AMBULANCE",
-    "FERRY",
-    "FORKLIFT",
-    "DUMP TRUCK",
-    "TOW TRUCK",
-    "CEMENT TRUCK",
+    Toys: [
+        "Ball","Teddy Bear","Doll","Toy Car","Yo-Yo","Kite","Robot","Puzzle","Dice","Domino",
+        "Chess Piece","Carrom Board","Playing Cards","Spinning Top","Toy Train","Bubbles","Balloon","Marble","Slime","Lego",
+        "Building Blocks","Jigsaw Puzzle","Board Game","Game Controller","Roller Skates","Swing","Slide","Toy Plane","Toy Boat","Toy Robot"
+    ],
 
-    /* ---------- SPORTS ---------- */
+    Celebration: [
+        "Birthday Cake","Birthday Candle","Balloon","Gift","Present","Party Hat","Confetti","Firework","Christmas Tree","Santa Claus",
+        "Snowman","Christmas Stocking","Diya","Lantern","Candle","Garland","Flower Garland","Drum","Mask","Party Popper",
+        "Invitation","Wedding Ring","Wedding Cake","Bouquet","Parade","Party","Birthday","Wedding","Festival","Decoration"
+    ],
 
-    "CRICKET",
-    "FOOTBALL",
-    "SOCCER",
-    "TENNIS",
-    "BASKETBALL",
-    "HOCKEY",
-    "BADMINTON",
-    "VOLLEYBALL",
-    "BASEBALL",
-    "GOLF",
-    "BOXING",
-    "WRESTLING",
-    "SWIMMING",
-    "RUNNING",
-    "CYCLING",
-    "SKATEBOARDING",
-    "SURFING",
-    "SKIING",
-    "ARCHERY",
-    "BOWLING",
-    "TABLE TENNIS",
-    "CARROM",
-    "CHESS",
-    "KABADDI",
-    "KHO KHO",
-    "RUGBY",
-    "CRICKET BAT",
-    "CRICKET BALL",
-    "FOOTBALL",
-    "TENNIS RACKET",
-    "BADMINTON RACKET",
-    "GOLF CLUB",
-    "BASEBALL BAT",
-    "BOXING GLOVE",
-    "MEDAL",
-    "TROPHY",
-    "WHISTLE",
-    "SPORTS SHOES",
-    "HELMET",
-    "STOPWATCH",
+    Adventure: [
+        "Treasure Chest","Treasure Map","Pirate Ship","Sword","Shield","Castle","Dragon","Unicorn","Mermaid","Fairy",
+        "Ghost","Vampire","Witch","Wizard","Magic Wand","Campfire","Tent","Sleeping Bag","Picnic Basket","Compass",
+        "Binoculars","Map","Hiking","Mountain Climber","Fisherman","Fishing Rod","Anchor","Sail","Lighthouse","Cave",
+        "Jungle","Island","Volcano","Waterfall","Bridge","Rope","Ladder","Torch","Gold Coin","Diamond"
+    ]
 
-    /* ---------- MUSICAL ITEMS ---------- */
-
-    "GUITAR",
-    "PIANO",
-    "DRUM",
-    "VIOLIN",
-    "FLUTE",
-    "TRUMPET",
-    "SAXOPHONE",
-    "HARMONICA",
-    "TAMBOURINE",
-    "BELL",
-    "HARP",
-    "CELLO",
-    "MICROPHONE",
-    "SPEAKER",
-    "DJ TURNTABLE",
-    "MUSIC NOTE",
-    "HEADPHONES",
-    "DRUMSTICK",
-    "CONCERT STAGE",
-    "RADIO",
-
-    /* ---------- CLOTHING ---------- */
-
-    "SHIRT",
-    "T-SHIRT",
-    "PANTS",
-    "JEANS",
-    "SHORTS",
-    "SKIRT",
-    "DRESS",
-    "JACKET",
-    "COAT",
-    "SWEATER",
-    "HOODIE",
-    "TIE",
-    "BOW TIE",
-    "BELT",
-    "SOCKS",
-    "SHOES",
-    "SANDALS",
-    "BOOTS",
-    "SLIPPERS",
-    "HAT",
-    "CAP",
-    "HELMET",
-    "SCARF",
-    "GLOVES",
-    "SUNGLASSES",
-    "GLASSES",
-    "WATCH",
-    "RING",
-    "NECKLACE",
-    "BRACELET",
-    "EARRINGS",
-    "CROWN",
-    "MASK",
-    "RAINCOAT",
-
-    /* ---------- PLACES / BUILDINGS ---------- */
-
-    "HOUSE",
-    "SCHOOL",
-    "HOSPITAL",
-    "BANK",
-    "HOTEL",
-    "RESTAURANT",
-    "CAFE",
-    "LIBRARY",
-    "MUSEUM",
-    "CINEMA",
-    "THEATER",
-    "STADIUM",
-    "PARK",
-    "PLAYGROUND",
-    "ZOO",
-    "AQUARIUM",
-    "AIRPORT",
-    "RAILWAY STATION",
-    "BUS STOP",
-    "TRAIN STATION",
-    "FIRE STATION",
-    "POLICE STATION",
-    "POST OFFICE",
-    "SUPERMARKET",
-    "SHOP",
-    "BAKERY",
-    "TEMPLE",
-    "CHURCH",
-    "MOSQUE",
-    "CASTLE",
-    "PALACE",
-    "LIGHTHOUSE",
-    "BRIDGE",
-    "TOWER",
-    "SKYSCRAPER",
-    "FACTORY",
-    "FARM",
-    "GARAGE",
-    "PET SHOP",
-    "BOOKSTORE",
-
-    /* ---------- NATURE ---------- */
-
-    "TREE",
-    "FLOWER",
-    "GRASS",
-    "BUSH",
-    "FOREST",
-    "MOUNTAIN",
-    "HILL",
-    "VOLCANO",
-    "RIVER",
-    "LAKE",
-    "WATERFALL",
-    "OCEAN",
-    "BEACH",
-    "ISLAND",
-    "CAVE",
-    "DESERT",
-    "PALM TREE",
-    "CACTUS",
-    "MUSHROOM",
-    "SUN",
-    "MOON",
-    "STAR",
-    "CLOUD",
-    "RAIN",
-    "RAINBOW",
-    "SNOW",
-    "LIGHTNING",
-    "TORNADO",
-    "WIND",
-    "WAVE",
-    "LEAF",
-    "PINE TREE",
-    "SUNFLOWER",
-    "ROSE",
-    "LOTUS",
-    "DAISY",
-    "TULIP",
-    "CACTUS",
-    "VINE",
-    "SEASHELL",
-
-    /* ---------- SPACE ---------- */
-
-    "SUN",
-    "MOON",
-    "EARTH",
-    "MARS",
-    "JUPITER",
-    "SATURN",
-    "PLANET",
-    "STAR",
-    "ASTRONAUT",
-    "ALIEN",
-    "ROCKET",
-    "SPACESHIP",
-    "UFO",
-    "SATELLITE",
-    "TELESCOPE",
-    "COMET",
-    "METEOR",
-    "ASTEROID",
-    "GALAXY",
-    "MOON LANDING",
-    "SPACE STATION",
-    "BLACK HOLE",
-
-    /* ---------- TOOLS ---------- */
-
-    "HAMMER",
-    "SCREWDRIVER",
-    "WRENCH",
-    "PLIERS",
-    "SAW",
-    "DRILL",
-    "AXE",
-    "SHOVEL",
-    "RAKE",
-    "HOE",
-    "LADDER",
-    "ROPE",
-    "CHAIN",
-    "NAIL",
-    "SCREW",
-    "BOLT",
-    "TOOLBOX",
-    "MEASURING TAPE",
-    "FLASHLIGHT",
-    "WORK GLOVES",
-    "WHEELBARROW",
-    "PAINT ROLLER",
-    "PAINTBRUSH",
-    "BUCKET",
-    "HAMMER AND NAIL",
-
-    /* ---------- BODY / HEALTH ---------- */
-
-    "HAND",
-    "FOOT",
-    "EYE",
-    "EAR",
-    "NOSE",
-    "MOUTH",
-    "TOOTH",
-    "HEART",
-    "BRAIN",
-    "BONE",
-    "HAIR",
-    "MUSTACHE",
-    "BEARD",
-    "FINGER",
-    "THUMB",
-    "ARM",
-    "LEG",
-    "KNEE",
-    "ELBOW",
-    "DOCTOR",
-    "NURSE",
-    "STETHOSCOPE",
-    "BANDAGE",
-    "THERMOMETER",
-    "MEDICINE",
-    "FIRST AID KIT",
-    "WHEELCHAIR",
-    "CRUTCH",
-    "AMBULANCE",
-    "HOSPITAL BED",
-
-    /* ---------- PEOPLE / PROFESSIONS ---------- */
-
-    "TEACHER",
-    "STUDENT",
-    "DOCTOR",
-    "NURSE",
-    "POLICE OFFICER",
-    "FIREFIGHTER",
-    "CHEF",
-    "FARMER",
-    "PILOT",
-    "DRIVER",
-    "SOLDIER",
-    "ASTRONAUT",
-    "ARTIST",
-    "SINGER",
-    "DANCER",
-    "ACTOR",
-    "PHOTOGRAPHER",
-    "ENGINEER",
-    "SCIENTIST",
-    "BUILDER",
-    "CARPENTER",
-    "PLUMBER",
-    "ELECTRICIAN",
-    "BARBER",
-    "BAKER",
-    "FISHERMAN",
-    "SAILOR",
-    "MAILMAN",
-    "JUDGE",
-    "DETECTIVE",
-    "MAGICIAN",
-    "CLOWN",
-    "PRINCESS",
-    "KING",
-    "QUEEN",
-    "PIRATE",
-    "NINJA",
-    "SUPERHERO",
-
-    /* ---------- FUN / TOYS ---------- */
-
-    "BALL",
-    "TEDDY BEAR",
-    "DOLL",
-    "TOY CAR",
-    "YO-YO",
-    "KITE",
-    "ROBOT",
-    "PUZZLE",
-    "DICE",
-    "DOMINO",
-    "CHESS PIECE",
-    "CARROM BOARD",
-    "PLAYING CARDS",
-    "SPINNING TOP",
-    "TOY TRAIN",
-    "TOY GUN",
-    "BUBBLES",
-    "BALLOON",
-    "YO-YO",
-    "MARBLE",
-    "SLIME",
-    "LEGO",
-    "BUILDING BLOCKS",
-    "JIGSAW PUZZLE",
-    "BOARD GAME",
-    "GAME CONTROLLER",
-    "TAMBourINE",
-    "KICK SCOOTER",
-    "ROLLER SKATES",
-    "SWING",
-
-    /* ---------- FESTIVAL / CELEBRATION ---------- */
-
-    "BIRTHDAY CAKE",
-    "BIRTHDAY CANDLE",
-    "BALLOON",
-    "GIFT",
-    "PRESENT",
-    "PARTY HAT",
-    "CONFETTI",
-    "FIREWORK",
-    "CHRISTMAS TREE",
-    "SANTA CLAUS",
-    "SNOWMAN",
-    "CHRISTMAS STOCKING",
-    "DIYA",
-    "LANTERN",
-    "CANDLE",
-    "GARLAND",
-    "FLOWER GARLAND",
-    "DRUM",
-    "MASK",
-    "PARTY POPPER",
-    "INVITATION",
-    "WEDDING RING",
-    "WEDDING CAKE",
-    "BOUQUET",
-    "UMBRELLA",
-    "PARADE",
-
-    /* ---------- EVERYDAY OBJECTS ---------- */
-
-    "KEY",
-    "LOCK",
-    "WALLET",
-    "PURSE",
-    "BACKPACK",
-    "SUITCASE",
-    "BAG",
-    "BOTTLE",
-    "GLASS",
-    "MUG",
-    "PLATE",
-    "BOWL",
-    "SPOON",
-    "FORK",
-    "KNIFE",
-    "NAPKIN",
-    "TISSUE",
-    "TOOTHBRUSH",
-    "TOOTHPASTE",
-    "SOAP",
-    "COMB",
-    "MIRROR",
-    "WATCH",
-    "PHONE",
-    "CHARGER",
-    "CABLE",
-    "REMOTE",
-    "CLOCK",
-    "CALENDAR",
-    "NEWSPAPER",
-    "MAGAZINE",
-    "BOOK",
-    "PEN",
-    "PENCIL",
-    "ERASER",
-    "RULER",
-    "SCISSORS",
-    "GLUE",
-    "TAPE",
-    "BOX",
-    "BAG",
-    "BASKET",
-    "BELL",
-    "WHISTLE",
-    "CANDLE",
-    "MATCHBOX",
-    "COIN",
-    "MONEY",
-    "CREDIT CARD",
-    "PASSPORT",
-
-    /* ---------- ACTIONS / ACTIVITIES ---------- */
-
-    "RUNNING",
-    "WALKING",
-    "JUMPING",
-    "SWIMMING",
-    "DANCING",
-    "SINGING",
-    "COOKING",
-    "READING",
-    "WRITING",
-    "DRAWING",
-    "PAINTING",
-    "SLEEPING",
-    "EATING",
-    "DRINKING",
-    "FISHING",
-    "CAMPING",
-    "HIKING",
-    "CYCLING",
-    "DRIVING",
-    "FLYING",
-    "SAILING",
-    "SKATING",
-    "SKIING",
-    "SURFING",
-    "SHOPPING",
-    "TEACHING",
-    "STUDYING",
-    "PLAYING",
-    "WATCHING TV",
-    "TAKING PHOTO",
-    "MAKING MUSIC",
-    "PLAYING CRICKET",
-    "PLAYING FOOTBALL",
-    "PLAYING TENNIS",
-    "FLYING KITE",
-    "RIDING BICYCLE",
-    "RIDING HORSE",
-    "CLIMBING",
-    "COOKING FOOD",
-    "WASHING CLOTHES",
-
-    /* ---------- OBJECT COMBINATIONS ---------- */
-
-    "TREASURE CHEST",
-    "SCHOOL BUS",
-    "ICE CREAM TRUCK",
-    "FIRE TRUCK",
-    "POLICE CAR",
-    "RACE TRACK",
-    "CAMPFIRE",
-    "TENT",
-    "SLEEPING BAG",
-    "PICNIC BASKET",
-    "BEACH BALL",
-    "SAND CASTLE",
-    "SNOWMAN",
-    "TREE HOUSE",
-    "BIRD HOUSE",
-    "DOG HOUSE",
-    "MAILBOX",
-    "TRAFFIC LIGHT",
-    "STOP SIGN",
-    "ROAD SIGN",
-    "PARK BENCH",
-    "FOUNTAIN",
-    "SWIMMING POOL",
-    "DIVING BOARD",
-    "PLAYGROUND",
-    "SLIDE",
-    "SWING SET",
-    "MERRY-GO-ROUND",
-    "FERRIS WHEEL",
-    "ROLLER COASTER",
-    "CIRCUS TENT",
-    "CIRCUS ELEPHANT",
-    "MAGIC WAND",
-    "PIRATE SHIP",
-    "TREASURE MAP",
-    "SWORD",
-    "SHIELD",
-    "CROWN",
-    "CASTLE TOWER",
-    "DRAWBRIDGE",
-    "DRAGON",
-    "UNICORN",
-    "MERMAID",
-    "FAIRY",
-    "GHOST",
-    "VAMPIRE",
-    "WITCH",
-    "WIZARD",
-
-    /* ---------- MORE EASY DRAWABLE WORDS ---------- */
-
-    "ANCHOR",
-    "BELL",
-    "BINOCULARS",
-    "BOW",
-    "ARROW",
-    "COMPASS",
-    "FLAG",
-    "GLOBE",
-    "MAP",
-    "TELESCOPE",
-    "MAGNIFYING GLASS",
-    "HOURGLASS",
-    "SCALE",
-    "THERMOMETER",
-    "MAGNET",
-    "LIGHTHOUSE",
-    "WHEEL",
-    "TIRE",
-    "ENGINE",
-    "STEERING WHEEL",
-    "BRAKE",
-    "PEDAL",
-    "LICENSE PLATE",
-    "TRAFFIC CONE",
-    "ROAD",
-    "HIGHWAY",
-    "TUNNEL",
-    "BRIDGE",
-    "STAIRS",
-    "ESCALATOR",
-    "ELEVATOR",
-    "DOOR BELL",
-    "KEYBOARD KEY",
-    "COMPUTER SCREEN",
-    "PHONE SCREEN",
-    "CAMERA LENS",
-    "PHOTO",
-    "VIDEO CAMERA",
-    "TRIPOD",
-    "BATTERY",
-    "PLUG",
-    "SOCKET",
-    "SWITCH",
-    "LIGHT SWITCH",
-    "FAN",
-    "CEILING FAN",
-    "TABLE FAN",
-    "AIR CONDITIONER",
-    "HEATER",
-    "FIREPLACE",
-    "CHIMNEY",
-
-    /* ---------- FINAL EXTRA WORDS ---------- */
-
-    "CLOUD",
-    "SUNGLASSES",
-    "RAIN BOOTS",
-    "RAINBOW",
-    "SNOWFLAKE",
-    "SNOWMAN",
-    "RAINDROP",
-    "THUNDER",
-    "LIGHTNING",
-    "TORNADO",
-    "VOLCANO",
-    "EARTHQUAKE",
-    "WAVE",
-    "ISLAND",
-    "SHIPWRECK",
-    "PIRATE",
-    "TREASURE",
-    "GOLD COIN",
-    "DIAMOND",
-    "RUBY",
-    "EMERALD",
-    "PEARL",
-    "RING",
-    "CROWN",
-    "NECKLACE",
-    "BRACELET",
-    "KEY",
-    "LOCK",
-    "CHEST",
-    "ROPE",
-    "LADDER",
-    "HAMMOCK",
-    "TENT",
-    "CAMPFIRE",
-    "TORCH",
-    "CAMPING BAG",
-    "BINOCULARS",
-    "COMPASS",
-    "MAP",
-    "MOUNTAIN CLIMBER",
-    "HIKER",
-    "FISHING ROD",
-    "FISHING BOAT",
-    "FISH",
-    "FISHING NET",
-    "SEASHELL",
-    "STARFISH",
-    "JELLYFISH",
-    "CORAL",
-    "PALM TREE",
-    "BEACH UMBRELLA",
-    "BEACH CHAIR",
-    "SANDCASTLE",
-    "BEACH TOWEL",
-    "SURFBOARD",
-    "SWIMMER",
-    "LIFEGUARD",
-    "LIFEBUOY",
-    "LIFE JACKET",
-    "DIVING MASK",
-    "SNORKEL",
-    "FLIPPERS",
-    "UNDERWATER CAMERA",
-    "SUBMARINE",
-    "TREASURE CHEST",
-    "MERMAID",
-    "OCTOPUS",
-    "SHARK",
-    "WHALE",
-    "DOLPHIN",
-    "SEAL",
-    "TURTLE",
-    "CRAB",
-    "LOBSTER",
-    "SEAHORSE",
-    "STARFISH",
-    "JELLYFISH",
-    "ANCHOR",
-    "SAIL",
-    "PIRATE FLAG",
-    "SHIP",
-    "LIGHTHOUSE",
-    "DOCK",
-    "HARBOR",
-    "BOAT",
-    "CANOE",
-    "KAYAK",
-    "YACHT",
-    "FERRY",
-    "SAILOR",
-    "CAPTAIN",
-    "LIFEBOAT",
-    "BUOY",
-    "OAR",
-    "PADDLE",
-    "FISHING ROD",
-    "NET",
-    "HOOK",
-    "WORM",
-    "BAIT",
-    "FISH",
-    "AQUARIUM",
-    "FISHBOWL",
-    "GOLDFISH",
-    "SEAWEED",
-    "CORAL REEF",
-    "DIVING SUIT",
-    "DIVING HELMET",
-    "UNDERWATER CAMERA",
-    "SCUBA DIVER"
-];
+};
 
 
 /* =========================================================
@@ -1203,180 +194,120 @@ const WORDS = [
 ========================================================= */
 
 let players = [];
-
+let topic = "";
 let secretWord = "";
 let traitorIndex = -1;
 
 let identityIndex = 0;
 
-let currentRound = 1;
-let currentPlayerIndex = 0;
+let round = 1;
+let playerIndex = 0;
 
-let currentStrokeStarted = false;
-let strokeFinished = false;
+let timer = null;
+let timeLeft = 20;
 
-let timerValue = 15;
-let timerInterval = null;
+let isDrawing = false;
+let turnActive = false;
+
+let votes = [];
+let voteIndex = 0;
+let selectedVote = null;
 
 let canvas;
 let ctx;
 
-let isDrawing = false;
-
-let votes = [];
-
-let currentVoteIndex = 0;
-let selectedVote = null;
-
-let finalResult = null;
-
 
 /* =========================================================
-   DOM REFERENCES
+   DOM
 ========================================================= */
+
+const $ = id => document.getElementById(id);
 
 const screens = {
-    setup: document.getElementById("setupScreen"),
-    category: document.getElementById("categoryScreen"),
-    identity: document.getElementById("identityScreen"),
-    drawing: document.getElementById("drawingScreen"),
-    voting: document.getElementById("votingScreen"),
-    voteSelection: document.getElementById("voteSelectionScreen"),
-    results: document.getElementById("resultsScreen"),
-    traitorGuess: document.getElementById("traitorGuessScreen"),
-    final: document.getElementById("finalScreen")
+    setup: $("setupScreen"),
+    topic: $("topicScreen"),
+    identity: $("identityScreen"),
+    drawing: $("drawingScreen"),
+    voting: $("votingScreen"),
+    voteSelection: $("voteSelectionScreen"),
+    results: $("resultsScreen"),
+    traitorGuess: $("traitorGuessScreen"),
+    final: $("finalScreen")
 };
 
-const playerInputs =
-    document.getElementById("playerInputs");
+const playerInputs = $("playerInputs");
+const addPlayerBtn = $("addPlayerBtn");
+const startGameBtn = $("startGameBtn");
 
-const addPlayerBtn =
-    document.getElementById("addPlayerBtn");
+const topicName = $("topicName");
+const continueTopicBtn = $("continueTopicBtn");
 
-const startGameBtn =
-    document.getElementById("startGameBtn");
+const identityAvatar = $("identityAvatar");
+const identityPlayerName = $("identityPlayerName");
+const revealBtn = $("revealBtn");
+const identityReveal = $("identityReveal");
+const identityContent = $("identityContent");
+const hidePassBtn = $("hidePassBtn");
 
-const revealBtn =
-    document.getElementById("revealBtn");
+const drawingPlayerName = $("drawingPlayerName");
+const roundLabel = $("roundLabel");
+const playerColorDot = $("playerColorDot");
+const timerDisplay = $("timer");
+const strokeInfo = $("strokeInfo");
+const canvasMessage = $("canvasMessage");
+const doneBtn = $("doneBtn");
 
-const hidePassBtn =
-    document.getElementById("hidePassBtn");
+const passBuffer = $("passBuffer");
+const nextPlayerText = $("nextPlayerText");
+const bufferTimer = $("bufferTimer");
 
-const identityReveal =
-    document.getElementById("identityReveal");
+const voteAvatar = $("voteAvatar");
+const votePlayerName = $("votePlayerName");
+const startVoteBtn = $("startVoteBtn");
 
-const identityContent =
-    document.getElementById("identityContent");
+const votingForName = $("votingForName");
+const voteOptions = $("voteOptions");
+const submitVoteBtn = $("submitVoteBtn");
 
-const identityPlayerName =
-    document.getElementById("identityPlayerName");
+const resultsList = $("resultsList");
+const resultSummary = $("resultSummary");
+const continueResultsBtn = $("continueResultsBtn");
 
-const identityAvatar =
-    document.getElementById("identityAvatar");
+const showGuessInputBtn = $("showGuessInputBtn");
+const guessArea = $("guessArea");
+const guessInput = $("guessInput");
+const submitGuessBtn = $("submitGuessBtn");
 
-const drawingPlayerName =
-    document.getElementById("drawingPlayerName");
-
-const roundLabel =
-    document.getElementById("roundLabel");
-
-const playerColorDot =
-    document.getElementById("playerColorDot");
-
-const timerDisplay =
-    document.getElementById("timer");
-
-const strokeInfo =
-    document.getElementById("strokeInfo");
-
-const canvasMessage =
-    document.getElementById("canvasMessage");
-
-const voteAvatar =
-    document.getElementById("voteAvatar");
-
-const votePlayerName =
-    document.getElementById("votePlayerName");
-
-const startVoteBtn =
-    document.getElementById("startVoteBtn");
-
-const votingForName =
-    document.getElementById("votingForName");
-
-const voteOptions =
-    document.getElementById("voteOptions");
-
-const submitVoteBtn =
-    document.getElementById("submitVoteBtn");
-
-const resultsList =
-    document.getElementById("resultsList");
-
-const resultSummary =
-    document.getElementById("resultSummary");
-
-const continueResultsBtn =
-    document.getElementById("continueResultsBtn");
-
-const showGuessInputBtn =
-    document.getElementById("showGuessInputBtn");
-
-const guessArea =
-    document.getElementById("guessArea");
-
-const guessInput =
-    document.getElementById("guessInput");
-
-const submitGuessBtn =
-    document.getElementById("submitGuessBtn");
-
-const finalTitle =
-    document.getElementById("finalTitle");
-
-const finalMessage =
-    document.getElementById("finalMessage");
-
-const finalWord =
-    document.getElementById("finalWord");
-
-const finalTraitor =
-    document.getElementById("finalTraitor");
-
-const finalIcon =
-    document.getElementById("finalIcon");
-
-const newGameBtn =
-    document.getElementById("newGameBtn");
+const finalTitle = $("finalTitle");
+const finalMessage = $("finalMessage");
+const finalWord = $("finalWord");
+const finalTraitor = $("finalTraitor");
+const finalIcon = $("finalIcon");
+const newGameBtn = $("newGameBtn");
 
 
 /* =========================================================
-   SCREEN MANAGEMENT
+   SCREEN
 ========================================================= */
 
-function showScreen(screenName) {
+function showScreen(name) {
 
-    Object.values(screens).forEach(screen => {
-        screen.classList.remove("active");
-    });
+    Object.values(screens).forEach(
+        s => s.classList.remove("active")
+    );
 
-    screens[screenName].classList.add("active");
+    screens[name].classList.add("active");
 
-    window.scrollTo(0, 0);
+    window.scrollTo(0,0);
 }
 
 
 /* =========================================================
-   UTILITY
+   RANDOM
 ========================================================= */
 
-function randomItem(array) {
-
-    return array[
-        Math.floor(
-            Math.random() * array.length
-        )
-    ];
+function randomItem(arr) {
+    return arr[Math.floor(Math.random() * arr.length)];
 }
 
 
@@ -1384,156 +315,122 @@ function randomItem(array) {
    PLAYER SETUP
 ========================================================= */
 
-function createPlayerInput(name = "") {
+function addPlayer(name = "") {
 
-    const index =
-        playerInputs.children.length;
+    const index = playerInputs.children.length;
 
-    const row =
-        document.createElement("div");
+    const row = document.createElement("div");
 
     row.className = "player-input";
 
     row.innerHTML = `
-        <div
-            class="player-number"
-            style="
-                background:${COLORS[index]};
-                color:white;
-            ">
+        <div class="player-number"
+             style="background:${COLORS[index]}">
             ${index + 1}
         </div>
 
-        <input
-            type="text"
-            maxlength="20"
-            placeholder="Player ${index + 1}"
-            value="${name}">
+        <input type="text"
+               maxlength="20"
+               placeholder="Player ${index + 1}"
+               value="${name}">
     `;
 
     playerInputs.appendChild(row);
 
-    updatePlayerControls();
+    updateSetup();
 }
 
 
-function updatePlayerControls() {
+function updateSetup() {
 
-    const count =
-        playerInputs.children.length;
+    const count = playerInputs.children.length;
 
     addPlayerBtn.style.display =
-        count >= 10
-            ? "none"
-            : "block";
+        count >= 10 ? "none" : "block";
 
     startGameBtn.disabled =
         count < 3;
 }
 
 
-/* Initial players */
-
-createPlayerInput("Player 1");
-createPlayerInput("Player 2");
-createPlayerInput("Player 3");
+addPlayer("Player 1");
+addPlayer("Player 2");
+addPlayer("Player 3");
 
 
-addPlayerBtn.addEventListener(
-    "click",
-    () => {
+addPlayerBtn.onclick = () => {
 
-        if (
-            playerInputs.children.length < 10
-        ) {
-            createPlayerInput();
-        }
-
+    if (playerInputs.children.length < 10) {
+        addPlayer();
     }
-);
+
+};
 
 
 /* =========================================================
    START GAME
 ========================================================= */
 
-startGameBtn.addEventListener(
-    "click",
-    startGame
-);
-
-
-function startGame() {
+startGameBtn.onclick = () => {
 
     players = [];
 
-    const inputs =
-        playerInputs.querySelectorAll("input");
-
-    inputs.forEach(
-        (input, index) => {
-
-            const name =
-                input.value.trim() ||
-                `Player ${index + 1}`;
+    document
+        .querySelectorAll("#playerInputs input")
+        .forEach((input,index) => {
 
             players.push({
-                name: name,
+                name:
+                    input.value.trim() ||
+                    `Player ${index + 1}`,
+
                 color: COLORS[index],
                 votes: 0
             });
 
-        }
-    );
+        });
 
-    /*
-       Random Traitor
-    */
+    const topics = Object.keys(WORDS);
+
+    topic = randomItem(topics);
+
+    secretWord = randomItem(WORDS[topic]);
 
     traitorIndex =
         Math.floor(
-            Math.random() *
-            players.length
+            Math.random() * players.length
         );
-
-    /*
-       Random secret word
-       from the complete 1000-word pool
-    */
-
-    secretWord =
-        randomItem(WORDS);
-
-    /*
-       Reset voting
-    */
-
-    votes =
-        new Array(
-            players.length
-        ).fill(null);
 
     identityIndex = 0;
 
-    /*
-       IMPORTANT:
-       Category screen is completely skipped.
-    */
+    votes = new Array(players.length).fill(null);
 
-    setupIdentityScreen();
+    topicName.textContent = topic;
 
-    showScreen("identity");
-}
+    showScreen("topic");
+};
 
 
 /* =========================================================
-   IDENTITY REVEAL
+   TOPIC
 ========================================================= */
 
-function setupIdentityScreen() {
+continueTopicBtn.onclick = () => {
 
-    const player =
-        players[identityIndex];
+    setupIdentity();
+
+    showScreen("identity");
+
+};
+
+
+/* =========================================================
+   IDENTITY
+========================================================= */
+
+function setupIdentity() {
+
+    const player = players[identityIndex];
 
     identityPlayerName.textContent =
         player.name;
@@ -1544,52 +441,40 @@ function setupIdentityScreen() {
     identityAvatar.style.background =
         player.color;
 
-    revealBtn.style.display =
-        "block";
+    identityReveal.classList.add("hidden");
 
-    identityReveal.classList.add(
-        "hidden"
-    );
+    revealBtn.style.display = "block";
 
     identityContent.innerHTML = "";
 }
 
 
-revealBtn.addEventListener(
-    "click",
-    revealIdentity
-);
+revealBtn.onclick = () => {
 
-
-function revealIdentity() {
-
-    const isTraitor =
-        identityIndex === traitorIndex;
-
-    revealBtn.style.display =
-        "none";
+    revealBtn.style.display = "none";
 
     identityReveal.classList.remove(
         "hidden"
     );
 
-    if (isTraitor) {
+    const traitor =
+        identityIndex === traitorIndex;
+
+    if (traitor) {
 
         identityContent.innerHTML = `
             <div class="traitor-reveal">
 
-                <strong>
-                    YOU ARE THE TRAITOR!
-                </strong>
+                <strong>🕵️ YOU ARE THE TRAITOR!</strong>
 
                 <p>
-                    You do NOT know the secret word.
+                    Topic:
+                    <b>${topic}</b>
                 </p>
 
                 <p class="muted">
-                    Watch the drawing carefully,
-                    figure out what everyone is drawing,
-                    and avoid getting caught.
+                    You don't know the secret word.
+                    Watch the drawing and figure it out!
                 </p>
 
             </div>
@@ -1601,7 +486,7 @@ function revealIdentity() {
             <div class="real-artist">
 
                 <p>
-                    Your secret word is:
+                    Your secret word:
                 </p>
 
                 <span class="secret-word">
@@ -1609,81 +494,46 @@ function revealIdentity() {
                 </span>
 
                 <p class="muted">
-                    Draw carefully without making
-                    the word too obvious.
+                    Topic: ${topic}
                 </p>
 
             </div>
         `;
 
     }
-}
+
+};
 
 
-hidePassBtn.addEventListener(
-    "click",
-    nextIdentityPlayer
-);
-
-
-function nextIdentityPlayer() {
+hidePassBtn.onclick = () => {
 
     identityIndex++;
 
-    if (
-        identityIndex >=
-        players.length
-    ) {
+    if (identityIndex >= players.length) {
 
-        startDrawingPhase();
+        startDrawing();
 
     } else {
 
-        setupIdentityScreen();
+        setupIdentity();
 
     }
-}
+
+};
 
 
 /* =========================================================
    CANVAS
 ========================================================= */
 
-canvas =
-    document.getElementById(
-        "drawingCanvas"
-    );
-
-ctx =
-    canvas.getContext("2d");
+canvas = $("drawingCanvas");
+ctx = canvas.getContext("2d");
 
 
 function resizeCanvas() {
 
     const rect =
         canvas.getBoundingClientRect();
-
-    const oldCanvas =
-        document.createElement("canvas");
-
-    oldCanvas.width =
-        canvas.width;
-
-    oldCanvas.height =
-        canvas.height;
-
-    const oldCtx =
-        oldCanvas.getContext("2d");
-
-    if (canvas.width > 0) {
-
-        oldCtx.drawImage(
-            canvas,
-            0,
-            0
-        );
-
-    }
 
     const ratio =
         window.devicePixelRatio || 1;
@@ -1695,78 +545,12 @@ function resizeCanvas() {
         rect.height * ratio;
 
     ctx.setTransform(
-        ratio,
-        0,
-        0,
-        ratio,
-        0,
-        0
+        ratio,0,0,ratio,0,0
     );
 
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     ctx.lineWidth = 7;
-
-    if (
-        oldCanvas.width > 0 &&
-        oldCanvas.height > 0
-    ) {
-
-        ctx.drawImage(
-            oldCanvas,
-            0,
-            0,
-            oldCanvas.width,
-            oldCanvas.height,
-            0,
-            0,
-            rect.width,
-            rect.height
-        );
-
-    }
-}
-
-
-window.addEventListener(
-    "resize",
-    () => {
-
-        if (
-            screens.drawing.classList.contains(
-                "active"
-            )
-        ) {
-            resizeCanvas();
-        }
-
-    }
-);
-
-
-/* =========================================================
-   DRAWING PHASE
-========================================================= */
-
-function startDrawingPhase() {
-
-    currentRound = 1;
-    currentPlayerIndex = 0;
-
-    showScreen("drawing");
-
-    setTimeout(
-        () => {
-
-            resizeCanvas();
-
-            clearCanvas();
-
-            startPlayerTurn();
-
-        },
-        100
-    );
 }
 
 
@@ -1777,14 +561,7 @@ function clearCanvas() {
 
     ctx.save();
 
-    ctx.setTransform(
-        1,
-        0,
-        0,
-        1,
-        0,
-        0
-    );
+    ctx.setTransform(1,0,0,1,0,0);
 
     ctx.clearRect(
         0,
@@ -1803,22 +580,48 @@ function clearCanvas() {
         rect.width,
         rect.height
     );
-
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
 }
 
 
-function startPlayerTurn() {
+/* =========================================================
+   DRAWING START
+========================================================= */
 
-    clearTimer();
+function startDrawing() {
 
+    round = 1;
+    playerIndex = 0;
+
+    showScreen("drawing");
+
+    setTimeout(() => {
+
+        resizeCanvas();
+
+        clearCanvas();
+
+        startTurn();
+
+    },100);
+
+}
+
+
+/* =========================================================
+   PLAYER TURN
+========================================================= */
+
+function startTurn() {
+
+    clearInterval(timer);
+
+    passBuffer.classList.add("hidden");
+
+    turnActive = true;
     isDrawing = false;
-    currentStrokeStarted = false;
-    strokeFinished = false;
 
     const player =
-        players[currentPlayerIndex];
+        players[playerIndex];
 
     drawingPlayerName.textContent =
         player.name;
@@ -1830,126 +633,81 @@ function startPlayerTurn() {
         player.color;
 
     roundLabel.textContent =
-        `ROUND ${currentRound}`;
+        `ROUND ${round} / 3`;
 
     strokeInfo.textContent =
-        `Stroke ${currentRound} of 2`;
+        `Draw freely • ${topic}`;
 
     canvasMessage.classList.remove(
         "hidden"
     );
 
-    timerValue = 15;
+    doneBtn.disabled = false;
 
-    timerDisplay.textContent =
-        timerValue;
+    timeLeft = 20;
 
-    startTimer();
+    timerDisplay.textContent = timeLeft;
+
+    timer = setInterval(() => {
+
+        timeLeft--;
+
+        timerDisplay.textContent =
+            timeLeft;
+
+        if (timeLeft <= 0) {
+
+            clearInterval(timer);
+
+            endTurn();
+
+        }
+
+    },1000);
+
 }
 
 
 /* =========================================================
-   TIMER
+   POINTER DRAWING
 ========================================================= */
 
-function startTimer() {
-
-    clearTimer();
-
-    timerInterval =
-        setInterval(
-            () => {
-
-                timerValue--;
-
-                timerDisplay.textContent =
-                    timerValue;
-
-                if (
-                    timerValue <= 0
-                ) {
-
-                    clearTimer();
-
-                    endPlayerTurn();
-
-                }
-
-            },
-            1000
-        );
-}
-
-
-function clearTimer() {
-
-    if (timerInterval) {
-
-        clearInterval(
-            timerInterval
-        );
-
-        timerInterval = null;
-    }
-}
-
-
-/* =========================================================
-   DRAWING
-========================================================= */
-
-function getPointerPosition(event) {
+function position(e) {
 
     const rect =
         canvas.getBoundingClientRect();
 
     return {
-
-        x:
-            event.clientX -
-            rect.left,
-
-        y:
-            event.clientY -
-            rect.top
-
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
     };
+
 }
 
 
 canvas.addEventListener(
     "pointerdown",
-    event => {
+    e => {
 
-        if (
-            strokeFinished ||
-            isDrawing
-        ) {
-            return;
-        }
+        if (!turnActive) return;
 
         isDrawing = true;
 
-        currentStrokeStarted = true;
-
         canvas.setPointerCapture(
-            event.pointerId
+            e.pointerId
         );
 
-        const pos =
-            getPointerPosition(event);
+        const p = position(e);
 
         ctx.beginPath();
 
         ctx.moveTo(
-            pos.x,
-            pos.y
+            p.x,
+            p.y
         );
 
         ctx.strokeStyle =
-            players[
-                currentPlayerIndex
-            ].color;
+            players[playerIndex].color;
 
         ctx.lineWidth = 7;
 
@@ -1963,18 +721,16 @@ canvas.addEventListener(
 
 canvas.addEventListener(
     "pointermove",
-    event => {
+    e => {
 
-        if (!isDrawing) {
+        if (!isDrawing || !turnActive)
             return;
-        }
 
-        const pos =
-            getPointerPosition(event);
+        const p = position(e);
 
         ctx.lineTo(
-            pos.x,
-            pos.y
+            p.x,
+            p.y
         );
 
         ctx.stroke();
@@ -1985,25 +741,18 @@ canvas.addEventListener(
 
 canvas.addEventListener(
     "pointerup",
-    event => {
+    e => {
 
-        if (!isDrawing) {
+        if (!isDrawing)
             return;
-        }
 
         isDrawing = false;
 
-        strokeFinished = true;
-
         try {
-
             canvas.releasePointerCapture(
-                event.pointerId
+                e.pointerId
             );
-
         } catch (_) {}
-
-        endPlayerTurn();
 
     }
 );
@@ -2013,110 +762,182 @@ canvas.addEventListener(
     "pointercancel",
     () => {
 
-        if (isDrawing) {
-
-            isDrawing = false;
-
-            strokeFinished = true;
-
-            endPlayerTurn();
-
-        }
+        isDrawing = false;
 
     }
 );
 
 
 /* =========================================================
-   END PLAYER TURN
+   DONE & PASS
 ========================================================= */
 
-function endPlayerTurn() {
+doneBtn.onclick = () => {
 
-    clearTimer();
+    if (!turnActive) return;
 
+    endTurn();
+
+};
+
+
+/* =========================================================
+   END TURN
+========================================================= */
+
+function endTurn() {
+
+    if (!turnActive) return;
+
+    turnActive = false;
     isDrawing = false;
 
-    setTimeout(
-        advanceDrawingTurn,
-        350
-    );
-}
+    clearInterval(timer);
 
+    doneBtn.disabled = true;
 
-function advanceDrawingTurn() {
+    /*
+       IMPORTANT:
+       The next player's timer does NOT
+       start immediately.
 
-    currentPlayerIndex++;
+       Exactly 3 seconds of buffer.
+    */
 
-    if (
-        currentPlayerIndex >=
-        players.length
-    ) {
+    showPassBuffer();
 
-        currentPlayerIndex = 0;
-
-        if (
-            currentRound === 1
-        ) {
-
-            currentRound = 2;
-
-            setTimeout(
-                startPlayerTurn,
-                400
-            );
-
-        } else {
-
-            startVotingPhase();
-
-        }
-
-        return;
-    }
-
-    startPlayerTurn();
 }
 
 
 /* =========================================================
-   VOTING PHASE
+   3 SECOND PASS BUFFER
 ========================================================= */
 
-function startVotingPhase() {
+function showPassBuffer() {
 
-    clearTimer();
+    let nextIndex =
+        playerIndex + 1;
 
-    currentVoteIndex = 0;
+    let nextRound = round;
 
-    votes =
-        new Array(
-            players.length
-        ).fill(null);
+    if (nextIndex >= players.length) {
 
-    /*
-       Reset vote counters
-    */
+        nextIndex = 0;
 
-    players.forEach(
-        player => {
-            player.votes = 0;
-        }
+        nextRound++;
+
+    }
+
+    if (nextRound > 3) {
+
+        nextPlayerText.textContent =
+            "Drawing complete!";
+
+    } else {
+
+        nextPlayerText.textContent =
+            `Hand the phone to ${players[nextIndex].name}`;
+
+    }
+
+    passBuffer.classList.remove(
+        "hidden"
     );
 
-    setupVotePassScreen();
+    let seconds = 3;
 
-    showScreen("voting");
+    bufferTimer.textContent = seconds;
+
+    const buffer = setInterval(() => {
+
+        seconds--;
+
+        bufferTimer.textContent =
+            seconds;
+
+        if (seconds <= 0) {
+
+            clearInterval(buffer);
+
+            passBuffer.classList.add(
+                "hidden"
+            );
+
+            advanceTurn();
+
+        }
+
+    },1000);
+
 }
 
 
-function setupVotePassScreen() {
+/* =========================================================
+   NEXT TURN
+========================================================= */
+
+function advanceTurn() {
+
+    playerIndex++;
+
+    if (playerIndex >= players.length) {
+
+        playerIndex = 0;
+
+        round++;
+
+    }
+
+    /*
+       3 rounds complete
+    */
+
+    if (round > 3) {
+
+        startVoting();
+
+        return;
+
+    }
+
+    startTurn();
+
+}
+
+
+/* =========================================================
+   VOTING START
+========================================================= */
+
+function startVoting() {
+
+    votes =
+        new Array(players.length).fill(null);
+
+    players.forEach(
+        p => p.votes = 0
+    );
+
+    voteIndex = 0;
+
+    setupVotePass();
+
+    showScreen("voting");
+
+}
+
+
+/* =========================================================
+   VOTE PASS
+========================================================= */
+
+function setupVotePass() {
 
     const player =
-        players[currentVoteIndex];
+        players[voteIndex];
 
     voteAvatar.textContent =
-        currentVoteIndex + 1;
+        voteIndex + 1;
 
     voteAvatar.style.background =
         player.color;
@@ -2124,110 +945,83 @@ function setupVotePassScreen() {
     votePlayerName.textContent =
         player.name;
 
-    startVoteBtn.textContent =
-        "Vote";
 }
 
 
-startVoteBtn.addEventListener(
-    "click",
-    openVoteSelection
-);
-
-
-function openVoteSelection() {
+startVoteBtn.onclick = () => {
 
     selectedVote = null;
 
     submitVoteBtn.disabled = true;
 
     votingForName.textContent =
-        `${players[currentVoteIndex].name}'s Vote`;
+        `${players[voteIndex].name}'s Vote`;
 
-    renderVoteOptions();
+    renderVotes();
 
     showScreen("voteSelection");
-}
+
+};
 
 
 /* =========================================================
    VOTE OPTIONS
 ========================================================= */
 
-function renderVoteOptions() {
+function renderVotes() {
 
     voteOptions.innerHTML = "";
 
     players.forEach(
-        (player, index) => {
+        (player,index) => {
 
-            /*
-               Cannot vote for yourself
-            */
-
-            if (
-                index ===
-                currentVoteIndex
-            ) {
+            if (index === voteIndex)
                 return;
-            }
 
             const button =
-                document.createElement(
-                    "button"
-                );
+                document.createElement("button");
 
             button.className =
                 "vote-option";
 
             button.innerHTML = `
-                <div
-                    class="vote-color"
-                    style="
-                        background:${player.color};
-                    ">
-                </div>
+                <span class="vote-color"
+                      style="background:${player.color}">
+                </span>
 
                 <span class="vote-name">
                     ${player.name}
                 </span>
             `;
 
-            button.addEventListener(
-                "click",
-                () => {
+            button.onclick = () => {
 
-                    selectedVote =
-                        index;
+                selectedVote = index;
 
-                    document
-                        .querySelectorAll(
-                            ".vote-option"
+                document
+                    .querySelectorAll(
+                        ".vote-option"
+                    )
+                    .forEach(
+                        b =>
+                        b.classList.remove(
+                            "selected"
                         )
-                        .forEach(
-                            option =>
-                                option.classList
-                                    .remove(
-                                        "selected"
-                                    )
-                        );
-
-                    button.classList.add(
-                        "selected"
                     );
 
-                    submitVoteBtn.disabled =
-                        false;
+                button.classList.add(
+                    "selected"
+                );
 
-                }
-            );
+                submitVoteBtn.disabled = false;
 
-            voteOptions.appendChild(
-                button
-            );
+            };
+
+            voteOptions.appendChild(button);
 
         }
     );
+
 }
 
 
@@ -2235,98 +1029,70 @@ function renderVoteOptions() {
    SUBMIT VOTE
 ========================================================= */
 
-submitVoteBtn.addEventListener(
-    "click",
-    submitVote
-);
+submitVoteBtn.onclick = () => {
 
-
-function submitVote() {
-
-    if (
-        selectedVote === null
-    ) {
+    if (selectedVote === null)
         return;
-    }
 
-    votes[
-        currentVoteIndex
-    ] = selectedVote;
+    votes[voteIndex] =
+        selectedVote;
 
-    players[
-        selectedVote
-    ].votes++;
+    players[selectedVote].votes++;
 
-    currentVoteIndex++;
+    voteIndex++;
 
-    if (
-        currentVoteIndex >=
-        players.length
-    ) {
+    if (voteIndex >= players.length) {
 
-        calculateResults();
+        showResults();
 
     } else {
 
-        setupVotePassScreen();
+        setupVotePass();
 
         showScreen("voting");
 
     }
-}
+
+};
 
 
 /* =========================================================
    RESULTS
 ========================================================= */
 
-function calculateResults() {
-
-    renderResults();
-
-    showScreen("results");
-}
-
-
-function renderResults() {
+function showResults() {
 
     resultsList.innerHTML = "";
 
-    const sortedPlayers =
+    const sorted =
         players
             .map(
-                (player, index) => ({
-                    ...player,
-                    index
+                (p,i) => ({
+                    ...p,
+                    index:i
                 })
             )
             .sort(
-                (a, b) =>
-                    b.votes -
-                    a.votes
+                (a,b) =>
+                    b.votes - a.votes
             );
 
-    sortedPlayers.forEach(
-        (player, position) => {
+    sorted.forEach(
+        (player,index) => {
 
             const row =
-                document.createElement(
-                    "div"
-                );
+                document.createElement("div");
 
             row.className =
                 "result-row";
 
             row.innerHTML = `
                 <div class="result-rank">
-                    ${position + 1}
+                    ${index + 1}
                 </div>
 
-                <div
-                    class="vote-color"
-                    style="
-                        background:${player.color};
-                    ">
+                <div class="vote-color"
+                     style="background:${player.color}">
                 </div>
 
                 <div class="result-player">
@@ -2338,105 +1104,66 @@ function renderResults() {
                 </div>
             `;
 
-            resultsList.appendChild(
-                row
-            );
+            resultsList.appendChild(row);
 
         }
     );
 
 
-    const highestVotes =
+    const maxVotes =
         Math.max(
             ...players.map(
-                player =>
-                    player.votes
+                p => p.votes
             )
         );
 
-    /*
-       Strict majority:
-       more than half of all players
-    */
-
     const majority =
+        maxVotes >
         players.length / 2;
 
-    const topPlayers =
+    const top =
         players.filter(
-            player =>
-                player.votes ===
-                highestVotes
+            p => p.votes === maxVotes
         );
 
-    const hasMajority =
-        highestVotes >
-        majority;
-
-    /*
-       The Traitor must be the ONLY
-       player with the majority.
-    */
-
-    const traitorHasMajority =
-        hasMajority &&
-        topPlayers.length === 1 &&
-        players[
-            traitorIndex
-        ].votes ===
-            highestVotes;
+    const caught =
+        majority &&
+        top.length === 1 &&
+        players[traitorIndex].votes === maxVotes;
 
 
-    if (
-        traitorHasMajority
-    ) {
-
-        finalResult =
-            "traitor-caught";
+    if (caught) {
 
         resultSummary.innerHTML = `
-            <strong>
-                The group found the Traitor!
-            </strong>
-
+            <strong>🎯 The Traitor was caught!</strong>
             <p class="muted">
-                But the Traitor gets one final
-                chance to guess the secret word.
+                But they still have one final chance...
             </p>
         `;
 
+        continueResultsBtn.textContent =
+            "Give Traitor Final Guess";
+
     } else {
 
-        finalResult =
-            "traitor-wins";
+        resultSummary.innerHTML = `
+            <strong>🕵️ The Traitor escapes!</strong>
+            <p class="muted">
+                The players failed to identify
+                the Traitor correctly.
+            </p>
+        `;
 
-        if (!hasMajority) {
-
-            resultSummary.innerHTML = `
-                <strong>
-                    No majority vote.
-                </strong>
-
-                <p class="muted">
-                    The Traitor escapes!
-                </p>
-            `;
-
-        } else {
-
-            resultSummary.innerHTML = `
-                <strong>
-                    The group voted for the wrong player.
-                </strong>
-
-                <p class="muted">
-                    The Traitor escapes!
-                </p>
-            `;
-
-        }
+        continueResultsBtn.textContent =
+            "See Result";
 
     }
+
+    continueResultsBtn.dataset.caught =
+        caught ? "yes" : "no";
+
+    showScreen("results");
+
 }
 
 
@@ -2444,106 +1171,98 @@ function renderResults() {
    RESULTS CONTINUE
 ========================================================= */
 
-continueResultsBtn.addEventListener(
-    "click",
-    () => {
+continueResultsBtn.onclick = () => {
 
-        if (
-            finalResult ===
-            "traitor-caught"
-        ) {
+    const caught =
+        continueResultsBtn.dataset.caught ===
+        "yes";
 
-            showScreen(
-                "traitorGuess"
-            );
+    if (caught) {
 
-        } else {
+        guessArea.classList.add("hidden");
 
-            showFinalScreen(
-                false,
-                "The group failed to catch the Traitor."
-            );
+        showGuessInputBtn.style.display =
+            "block";
 
-        }
+        guessInput.value = "";
+
+        showScreen("traitorGuess");
+
+    } else {
+
+        finishGame(
+            false,
+            "The Traitor was not caught."
+        );
 
     }
-);
+
+};
 
 
 /* =========================================================
-   TRAITOR FINAL GUESS
+   TRAITOR GUESS
 ========================================================= */
 
-showGuessInputBtn.addEventListener(
-    "click",
-    () => {
+showGuessInputBtn.onclick = () => {
 
-        showGuessInputBtn.style.display =
-            "none";
+    showGuessInputBtn.style.display =
+        "none";
 
-        guessArea.classList.remove(
-            "hidden"
-        );
+    guessArea.classList.remove(
+        "hidden"
+    );
 
-        guessInput.focus();
+    guessInput.focus();
 
-    }
-);
+};
 
 
-submitGuessBtn.addEventListener(
-    "click",
-    submitTraitorGuess
-);
+submitGuessBtn.onclick =
+    submitGuess;
 
 
 guessInput.addEventListener(
     "keydown",
-    event => {
+    e => {
 
-        if (
-            event.key ===
-            "Enter"
-        ) {
-
-            submitTraitorGuess();
-
-        }
+        if (e.key === "Enter")
+            submitGuess();
 
     }
 );
 
 
-function submitTraitorGuess() {
+function submitGuess() {
 
     const guess =
         guessInput.value
             .trim()
-            .toUpperCase();
+            .toLowerCase();
 
-    if (!guess) {
+    if (!guess)
         return;
-    }
 
     const correct =
         guess ===
-        secretWord.toUpperCase();
+        secretWord.toLowerCase();
 
     if (correct) {
 
-        showFinalScreen(
+        finishGame(
             false,
             `The Traitor guessed the secret word correctly: ${secretWord}.`
         );
 
     } else {
 
-        showFinalScreen(
+        finishGame(
             true,
-            `The Traitor guessed "${guess}", but the secret word was ${secretWord}.`
+            `The Traitor guessed "${guess}", but the secret word was "${secretWord}".`
         );
 
     }
+
 }
 
 
@@ -2551,41 +1270,38 @@ function submitTraitorGuess() {
    FINAL SCREEN
 ========================================================= */
 
-function showFinalScreen(
+function finishGame(
     artistsWin,
     message
 ) {
+
+    finalMessage.textContent =
+        message;
 
     finalWord.textContent =
         secretWord;
 
     finalTraitor.textContent =
-        players[
-            traitorIndex
-        ].name;
-
-    finalMessage.textContent =
-        message;
+        players[traitorIndex].name;
 
     if (artistsWin) {
+
+        finalIcon.textContent = "🎨";
 
         finalTitle.textContent =
             "Artists Win!";
 
-        finalIcon.textContent =
-            "🎨";
-
     } else {
+
+        finalIcon.textContent = "🕵️";
 
         finalTitle.textContent =
             "Traitor Wins!";
 
-        finalIcon.textContent =
-            "🕵️";
-
     }
 
     showScreen("final");
+
 }
 
 
@@ -2593,66 +1309,38 @@ function showFinalScreen(
    NEW GAME
 ========================================================= */
 
-newGameBtn.addEventListener(
-    "click",
-    () => {
+newGameBtn.onclick = () => {
 
-        players = [];
+    clearInterval(timer);
 
-        secretWord = "";
+    players = [];
+    topic = "";
+    secretWord = "";
+    traitorIndex = -1;
 
-        traitorIndex = -1;
+    identityIndex = 0;
+    round = 1;
+    playerIndex = 0;
+    voteIndex = 0;
 
-        identityIndex = 0;
+    playerInputs.innerHTML = "";
 
-        currentRound = 1;
+    addPlayer("Player 1");
+    addPlayer("Player 2");
+    addPlayer("Player 3");
 
-        currentPlayerIndex = 0;
+    showScreen("setup");
 
-        currentVoteIndex = 0;
-
-        votes = [];
-
-        finalResult = null;
-
-        clearTimer();
-
-        guessInput.value = "";
-
-        guessArea.classList.add(
-            "hidden"
-        );
-
-        showGuessInputBtn.style.display =
-            "block";
-
-        playerInputs.innerHTML = "";
-
-        createPlayerInput(
-            "Player 1"
-        );
-
-        createPlayerInput(
-            "Player 2"
-        );
-
-        createPlayerInput(
-            "Player 3"
-        );
-
-        showScreen("setup");
-
-    }
-);
+};
 
 
 /* =========================================================
-   PREVENT PAGE SCROLL DURING DRAWING
+   CANVAS RESIZE
 ========================================================= */
 
-document.addEventListener(
-    "touchmove",
-    event => {
+window.addEventListener(
+    "resize",
+    () => {
 
         if (
             screens.drawing.classList.contains(
@@ -2660,19 +1348,42 @@ document.addEventListener(
             )
         ) {
 
-            if (
-                event.target ===
-                canvas
-            ) {
+            /*
+               Do not resize unnecessarily
+               while somebody is drawing.
+            */
 
-                event.preventDefault();
-
+            if (!isDrawing) {
+                resizeCanvas();
             }
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   PREVENT PAGE SCROLL WHILE DRAWING
+========================================================= */
+
+document.addEventListener(
+    "touchmove",
+    e => {
+
+        if (
+            screens.drawing.classList.contains(
+                "active"
+            ) &&
+            e.target === canvas
+        ) {
+
+            e.preventDefault();
 
         }
 
     },
     {
-        passive: false
+        passive:false
     }
 );
