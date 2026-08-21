@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, initial-scale=1.0,
-                   maximum-scale=1.0,user-scalable=no">
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <meta name="theme-color" content="#111827">
 
@@ -61,28 +60,28 @@
 
     <section id="topicScreen" class="screen">
 
-        <div class="top-header">
-            <span>🎯</span>
-            <h2>Today's Topic</h2>
-        </div>
-
         <div class="topic-card">
 
             <div class="topic-icon">🎲</div>
 
+            <h2>Choose Your Topic</h2>
+
             <h1 id="topicName">Animals</h1>
 
-            <p>
-                The topic has been secretly selected.
+            <p class="subtitle">
+                This topic will be shared with everyone,
+                including the Traitor.
             </p>
 
             <button id="continueTopicBtn"
                     class="primary-btn">
-                Continue
+                CONTINUE
             </button>
+
             <button id="skipTopicBtn"
-                    class="secondary-btn">
-               🔄 SKIP TOPIC
+                    class="secondary-btn"
+                    type="button">
+                🔄 SKIP TOPIC
             </button>
 
         </div>
@@ -145,7 +144,7 @@
             <div>
                 <span id="roundLabel"
                       class="round-badge">
-                    ROUND 1
+                    ROUND 1 / 3
                 </span>
 
                 <h2>
@@ -168,7 +167,7 @@
                   class="color-dot"></span>
 
             <span id="strokeInfo">
-                Draw anything that helps!
+                Draw freely!
             </span>
 
         </div>
@@ -185,9 +184,13 @@
         </div>
 
         <button id="doneBtn"
-                class="done-btn">
+                class="done-btn"
+                type="button">
             ✓ DONE & PASS
         </button>
+
+
+        <!-- PASS BUFFER -->
 
         <div id="passBuffer"
              class="pass-buffer hidden">
@@ -233,7 +236,8 @@
             </p>
 
             <button id="startVoteBtn"
-                    class="primary-btn">
+                    class="primary-btn"
+                    type="button">
                 VOTE
             </button>
 
@@ -265,7 +269,8 @@
 
             <button id="submitVoteBtn"
                     class="primary-btn"
-                    disabled>
+                    disabled
+                    type="button">
                 Submit Vote & Pass
             </button>
 
@@ -292,7 +297,8 @@
             </div>
 
             <button id="continueResultsBtn"
-                    class="primary-btn">
+                    class="primary-btn"
+                    type="button">
                 Continue
             </button>
 
@@ -322,7 +328,8 @@
             </p>
 
             <button id="showGuessInputBtn"
-                    class="primary-btn">
+                    class="primary-btn"
+                    type="button">
                 Make My Guess
             </button>
 
@@ -335,7 +342,8 @@
                        autocomplete="off">
 
                 <button id="submitGuessBtn"
-                        class="primary-btn">
+                        class="primary-btn"
+                        type="button">
                     Submit Guess
                 </button>
 
@@ -372,6 +380,11 @@
                 </div>
 
                 <div>
+                    <span>Topic</span>
+                    <strong id="finalTopic"></strong>
+                </div>
+
+                <div>
                     <span>Traitor</span>
                     <strong id="finalTraitor"></strong>
                 </div>
@@ -379,7 +392,8 @@
             </div>
 
             <button id="newGameBtn"
-                    class="primary-btn">
+                    class="primary-btn"
+                    type="button">
                 New Game
             </button>
 
