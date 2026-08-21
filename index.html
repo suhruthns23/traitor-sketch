@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Traitor Sketch</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="app">
+
+    <!-- =========================
+         SETUP SCREEN
+    ========================== -->
+    <section id="setupScreen" class="screen active">
+
+        <div class="logo">
+            <div class="logo-icon">✏️</div>
+            <h1>Traitor Sketch</h1>
+            <p>Draw. Deceive. Discover.</p>
+        </div>
+
+        <div class="card setup-card">
+
+            <h2>Players</h2>
+            <p class="muted">
+                Add 3–10 players. Each player gets a unique drawing color.
+            </p>
+
+            <div id="playerInputs"></div>
+
+            <button id="addPlayerBtn" class="secondary-btn">
+                + Add Player
+            </button>
+
+            <button id="startGameBtn" class="primary-btn">
+                Play Game
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         CATEGORY SCREEN
+    ========================== -->
+    <section id="categoryScreen" class="screen">
+
+        <div class="top-bar">
+            <div>
+                <span class="eyebrow">ROUND SETUP</span>
+                <h2>Choose a Category</h2>
+            </div>
+        </div>
+
+        <p class="muted center">
+            The secret word will be selected automatically.
+        </p>
+
+        <div id="categoryGrid" class="category-grid"></div>
+
+    </section>
+
+
+    <!-- =========================
+         IDENTITY SCREEN
+    ========================== -->
+    <section id="identityScreen" class="screen">
+
+        <div class="pass-card">
+
+            <span class="eyebrow">PASS THE PHONE</span>
+
+            <div class="player-avatar" id="identityAvatar">
+                1
+            </div>
+
+            <h2>
+                Hand over the phone to
+            </h2>
+
+            <h1 id="identityPlayerName">
+                Player 1
+            </h1>
+
+            <button id="revealBtn" class="primary-btn">
+                Reveal My Identity
+            </button>
+
+            <div id="identityReveal" class="identity-reveal hidden">
+
+                <div id="identityContent"></div>
+
+                <button id="hidePassBtn" class="primary-btn">
+                    Hide & Pass
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         DRAWING SCREEN
+    ========================== -->
+    <section id="drawingScreen" class="screen">
+
+        <div class="drawing-header">
+
+            <div>
+                <span class="eyebrow" id="roundLabel">
+                    ROUND 1
+                </span>
+
+                <h2 id="drawingPlayerName">
+                    Player
+                </h2>
+            </div>
+
+            <div class="turn-info">
+
+                <div
+                    id="playerColorDot"
+                    class="color-dot">
+                </div>
+
+                <div id="timer">
+                    15
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="canvas-wrapper">
+            <canvas id="drawingCanvas"></canvas>
+
+            <div id="canvasMessage" class="canvas-message">
+                Draw one continuous stroke
+            </div>
+        </div>
+
+        <div class="drawing-footer">
+            <span id="strokeInfo">
+                Stroke 1 of 2
+            </span>
+
+            <span id="drawingInstruction">
+                Lift your finger to finish
+            </span>
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         VOTING SCREEN
+    ========================== -->
+    <section id="votingScreen" class="screen">
+
+        <div class="pass-card">
+
+            <span class="eyebrow">FINAL PASS</span>
+
+            <div class="player-avatar" id="voteAvatar">
+                1
+            </div>
+
+            <h2>
+                Hand phone to
+            </h2>
+
+            <h1 id="votePlayerName">
+                Player
+            </h1>
+
+            <p class="muted">
+                Keep your vote secret.
+            </p>
+
+            <button id="startVoteBtn" class="primary-btn">
+                Vote
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         VOTE SELECTION SCREEN
+    ========================== -->
+    <section id="voteSelectionScreen" class="screen">
+
+        <div class="top-bar">
+
+            <div>
+                <span class="eyebrow">PRIVATE VOTE</span>
+
+                <h2 id="votingForName">
+                    Player's Vote
+                </h2>
+            </div>
+
+        </div>
+
+        <p class="muted">
+            Who do you think is the Traitor?
+        </p>
+
+        <div id="voteOptions" class="vote-options"></div>
+
+        <button
+            id="submitVoteBtn"
+            class="primary-btn"
+            disabled>
+            Submit Vote & Pass
+        </button>
+
+    </section>
+
+
+    <!-- =========================
+         RESULTS SCREEN
+    ========================== -->
+    <section id="resultsScreen" class="screen">
+
+        <div class="results-header">
+
+            <span class="eyebrow">
+                THE VOTES ARE IN
+            </span>
+
+            <h1>Who Was the Traitor?</h1>
+
+        </div>
+
+        <div id="resultsList" class="results-list"></div>
+
+        <div id="resultSummary" class="result-summary"></div>
+
+        <button
+            id="continueResultsBtn"
+            class="primary-btn">
+            Continue
+        </button>
+
+    </section>
+
+
+    <!-- =========================
+         TRAITOR GUESS SCREEN
+    ========================== -->
+    <section id="traitorGuessScreen" class="screen">
+
+        <div class="pass-card">
+
+            <span class="eyebrow">
+                LAST-DITCH GUESS
+            </span>
+
+            <div class="traitor-symbol">
+                🕵️
+            </div>
+
+            <h1>
+                The Traitor Survived!
+            </h1>
+
+            <p>
+                Hand the phone to the Traitor.
+            </p>
+
+            <p class="muted">
+                Can they figure out the secret word?
+            </p>
+
+            <button
+                id="showGuessInputBtn"
+                class="primary-btn">
+                I'm the Traitor
+            </button>
+
+            <div
+                id="guessArea"
+                class="guess-area hidden">
+
+                <input
+                    id="guessInput"
+                    type="text"
+                    autocomplete="off"
+                    placeholder="Enter the secret word">
+
+                <button
+                    id="submitGuessBtn"
+                    class="primary-btn">
+                    Submit Guess
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         FINAL SCREEN
+    ========================== -->
+    <section id="finalScreen" class="screen">
+
+        <div class="final-card">
+
+            <div id="finalIcon" class="final-icon">
+                🏆
+            </div>
+
+            <span class="eyebrow">
+                GAME OVER
+            </span>
+
+            <h1 id="finalTitle">
+                Artists Win!
+            </h1>
+
+            <p id="finalMessage">
+                The Traitor was caught.
+            </p>
+
+            <div class="final-details">
+
+                <div>
+                    <span>Secret Word</span>
+                    <strong id="finalWord">APPLE</strong>
+                </div>
+
+                <div>
+                    <span>Traitor</span>
+                    <strong id="finalTraitor">Player</strong>
+                </div>
+
+            </div>
+
+            <button
+                id="newGameBtn"
+                class="primary-btn">
+                New Game
+            </button>
+
+        </div>
+
+    </section>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
