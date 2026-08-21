@@ -1,14 +1,16 @@
 /* =========================================================
    TRAITOR SKETCH
-   FINAL VERSION
+   COMPLETE FINAL SCRIPT
 
-   3-10 PLAYERS
-   3 ROUNDS
+   3–10 PLAYERS
+   3 DRAWING ROUNDS
    20 SECONDS / TURN
    NO ONE-STROKE LIMIT
    DONE & PASS
    3 SECOND PASS BUFFER
-   TOPIC HINT FOR TRAITOR
+   TOPIC + SECRET WORD
+   TRAITOR GETS TOPIC HINT
+   SKIP TOPIC
 ========================================================= */
 
 
@@ -32,7 +34,6 @@ const COLORS = [
 
 /* =========================================================
    WORD DATABASE
-   Compact comma-separated format
 ========================================================= */
 
 const WORDS = {
@@ -70,13 +71,13 @@ const WORDS = {
         "Waffle","Omelette","Toast","Bread","Cheese","Butter","Yogurt","Rice","Dosa","Idli",
         "Vada","Samosa","Paratha","Roti","Chapati","Biryani","Curry","Soup","Salad","Sushi",
         "Taco","Burrito","Nachos","Pretzel","Muffin","Pie","Pudding","Jelly","Honey","Jam",
-        "Cereal","French Toast","Pasta Bowl","Fruit Salad","Donut","Pancakes","Fried Rice","Sandwich","Pav Bhaji","Noodles"
+        "Cereal","French Toast","Fried Rice","Pav Bhaji"
     ],
 
     Drinks: [
         "Water","Milk","Tea","Coffee","Juice","Lemonade","Milkshake","Smoothie","Hot Chocolate","Coconut Water",
-        "Soft Drink","Water Bottle","Tea Cup","Coffee Cup","Mocktail","Fruit Juice","Orange Juice","Apple Juice","Mango Juice","Milkshake",
-        "Coconut Drink","Lassi","Buttermilk","Soup","Energy Drink","Drink Can","Thermos","Flask","Straw","Cup"
+        "Soft Drink","Orange Juice","Apple Juice","Mango Juice","Lassi","Buttermilk","Mocktail","Fruit Juice",
+        "Energy Drink","Cocoa","Green Tea","Lime Juice","Tea Cup","Coffee Cup","Water Bottle","Thermos","Flask","Straw","Cup","Mug"
     ],
 
     Vehicles: [
@@ -93,7 +94,7 @@ const WORDS = {
         "Toaster","Blender","Mixer","Kettle","Pan","Pot","Pressure Cooker","Bottle","Jar","Box",
         "Basket","Vase","Candle","Plant Pot","Bookshelf","Drawer","Carpet","Rug","Doormat","Umbrella",
         "Raincoat","Towel","Toothbrush","Toothpaste","Soap","Shampoo","Comb","Hairbrush","Perfume","Wallet",
-        "Purse","Backpack","Suitcase","Mug","Plate","Bowl","Spoon","Fork","Knife","Napkin"
+        "Purse","Backpack","Suitcase","Plate","Bowl","Spoon","Fork","Knife","Napkin","Cup"
     ],
 
     School: [
@@ -120,15 +121,16 @@ const WORDS = {
     ],
 
     Music: [
-        "Guitar","Piano","Drum","Violin","Flute","Trumpet","Bell","Microphone","Speaker","Headphones","Drumstick","Radio",
-        "Keyboard","Tabla","Music Stand"
+        "Guitar","Piano","Drum","Violin","Flute","Trumpet","Saxophone","Harmonica","Tambourine","Bell",
+        "Harp","Cello","Microphone","Speaker","DJ Turntable","Music Note","Headphones","Drumstick","Concert Stage","Radio",
+        "Keyboard","Tabla","Cymbal","Xylophone","Maracas","Sitar","Recorder","Accordion","Music Stand","Guitar Pick"
     ],
 
     Clothing: [
         "Shirt","T-Shirt","Pants","Jeans","Shorts","Skirt","Dress","Jacket","Coat","Sweater",
         "Hoodie","Tie","Bow Tie","Belt","Socks","Shoes","Sandals","Boots","Slippers","Hat",
         "Cap","Helmet","Scarf","Gloves","Sunglasses","Glasses","Watch","Ring","Necklace","Bracelet",
-        "Earrings","Crown","Mask","Raincoat","Swimsuit","School Uniform","Suit","Tie","Backpack","Handbag"
+        "Earrings","Crown","Mask","Raincoat","Swimsuit","School Uniform","Suit","Backpack","Handbag","Purse"
     ],
 
     Places: [
@@ -144,7 +146,7 @@ const WORDS = {
         "Waterfall","Ocean","Beach","Island","Cave","Desert","Palm Tree","Cactus","Mushroom","Sun",
         "Moon","Star","Cloud","Rain","Rainbow","Snow","Lightning","Tornado","Wind","Wave",
         "Leaf","Pine Tree","Sunflower","Rose","Lotus","Daisy","Tulip","Vine","Seashell","Snowflake",
-        "Raindrop","Thunder","River","Pond","Valley","Cliff","Rock","Stone","Garden","Water Lily"
+        "Raindrop","Thunder","Pond","Valley","Cliff","Rock","Stone","Garden","Water Lily","River"
     ],
 
     Space: [
@@ -156,7 +158,7 @@ const WORDS = {
     Tools: [
         "Hammer","Screwdriver","Wrench","Pliers","Saw","Drill","Axe","Shovel","Rake","Hoe",
         "Ladder","Rope","Chain","Nail","Screw","Bolt","Toolbox","Measuring Tape","Flashlight","Work Gloves",
-        "Wheelbarrow","Paint Roller","Paintbrush","Bucket","Hammer and Nail","Spanner","Crowbar","Chisel","Clamp","Drill Machine"
+        "Wheelbarrow","Paint Roller","Paintbrush","Bucket","Spanner","Crowbar","Chisel","Clamp","Drill Machine","Screwdriver"
     ],
 
     People: [
@@ -181,18 +183,19 @@ const WORDS = {
     Adventure: [
         "Treasure Chest","Treasure Map","Pirate Ship","Sword","Shield","Castle","Dragon","Unicorn","Mermaid","Fairy",
         "Ghost","Vampire","Witch","Wizard","Magic Wand","Campfire","Tent","Sleeping Bag","Picnic Basket","Compass",
-        "Binoculars","Map","Hiking","Mountain Climber","Fisherman","Fishing Rod","Anchor","Sail","Lighthouse","Cave",
-        "Jungle","Island","Volcano","Waterfall","Bridge","Rope","Ladder","Torch","Gold Coin","Diamond"
+        "Binoculars","Map","Hiking","Mountain Climber","Fishing Rod","Anchor","Sail","Lighthouse","Cave","Jungle",
+        "Island","Volcano","Waterfall","Bridge","Rope","Ladder","Torch","Gold Coin","Diamond","Treasure"
     ]
 
 };
 
 
 /* =========================================================
-   GAME STATE
+   GAME VARIABLES
 ========================================================= */
 
 let players = [];
+
 let topic = "";
 let secretWord = "";
 let traitorIndex = -1;
@@ -203,6 +206,8 @@ let round = 1;
 let playerIndex = 0;
 
 let timer = null;
+let bufferTimerInterval = null;
+
 let timeLeft = 20;
 
 let isDrawing = false;
@@ -217,29 +222,52 @@ let ctx;
 
 
 /* =========================================================
-   DOM
+   HELPER
 ========================================================= */
 
-const $ = id => document.getElementById(id);
+function $(id) {
+    return document.getElementById(id);
+}
 
-const screens = {
-    setup: $("setupScreen"),
-    topic: $("topicScreen"),
-    identity: $("identityScreen"),
-    drawing: $("drawingScreen"),
-    voting: $("votingScreen"),
-    voteSelection: $("voteSelectionScreen"),
-    results: $("resultsScreen"),
-    traitorGuess: $("traitorGuessScreen"),
-    final: $("finalScreen")
-};
+
+function randomItem(array) {
+    return array[
+        Math.floor(Math.random() * array.length)
+    ];
+}
+
+
+function showScreen(name) {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+            screen.classList.remove("active");
+        });
+
+    const screen =
+        $(`${name}Screen`);
+
+    if (screen) {
+        screen.classList.add("active");
+    }
+
+    window.scrollTo(0, 0);
+}
+
+
+/* =========================================================
+   DOM REFERENCES
+========================================================= */
 
 const playerInputs = $("playerInputs");
 const addPlayerBtn = $("addPlayerBtn");
 const startGameBtn = $("startGameBtn");
+
 const topicName = $("topicName");
 const continueTopicBtn = $("continueTopicBtn");
 const skipTopicBtn = $("skipTopicBtn");
+
 const identityAvatar = $("identityAvatar");
 const identityPlayerName = $("identityPlayerName");
 const revealBtn = $("revealBtn");
@@ -257,7 +285,7 @@ const doneBtn = $("doneBtn");
 
 const passBuffer = $("passBuffer");
 const nextPlayerText = $("nextPlayerText");
-const bufferTimer = $("bufferTimer");
+const bufferTimerDisplay = $("bufferTimer");
 
 const voteAvatar = $("voteAvatar");
 const votePlayerName = $("votePlayerName");
@@ -279,34 +307,10 @@ const submitGuessBtn = $("submitGuessBtn");
 const finalTitle = $("finalTitle");
 const finalMessage = $("finalMessage");
 const finalWord = $("finalWord");
+const finalTopic = $("finalTopic");
 const finalTraitor = $("finalTraitor");
 const finalIcon = $("finalIcon");
 const newGameBtn = $("newGameBtn");
-
-
-/* =========================================================
-   SCREEN
-========================================================= */
-
-function showScreen(name) {
-
-    Object.values(screens).forEach(
-        s => s.classList.remove("active")
-    );
-
-    screens[name].classList.add("active");
-
-    window.scrollTo(0,0);
-}
-
-
-/* =========================================================
-   RANDOM
-========================================================= */
-
-function randomItem(arr) {
-    return arr[Math.floor(Math.random() * arr.length)];
-}
 
 
 /* =========================================================
@@ -315,9 +319,11 @@ function randomItem(arr) {
 
 function addPlayer(name = "") {
 
-    const index = playerInputs.children.length;
+    const index =
+        playerInputs.children.length;
 
-    const row = document.createElement("div");
+    const row =
+        document.createElement("div");
 
     row.className = "player-input";
 
@@ -327,10 +333,11 @@ function addPlayer(name = "") {
             ${index + 1}
         </div>
 
-        <input type="text"
-               maxlength="20"
-               placeholder="Player ${index + 1}"
-               value="${name}">
+        <input
+            type="text"
+            maxlength="20"
+            placeholder="Player ${index + 1}"
+            value="${name}">
     `;
 
     playerInputs.appendChild(row);
@@ -341,7 +348,8 @@ function addPlayer(name = "") {
 
 function updateSetup() {
 
-    const count = playerInputs.children.length;
+    const count =
+        playerInputs.children.length;
 
     addPlayerBtn.style.display =
         count >= 10 ? "none" : "block";
@@ -356,94 +364,178 @@ addPlayer("Player 2");
 addPlayer("Player 3");
 
 
-addPlayerBtn.onclick = () => {
+addPlayerBtn.addEventListener(
+    "click",
+    () => {
 
-    if (playerInputs.children.length < 10) {
-        addPlayer();
+        if (
+            playerInputs.children.length < 10
+        ) {
+            addPlayer();
+        }
+
     }
-
-};
+);
 
 
 /* =========================================================
    START GAME
 ========================================================= */
 
-startGameBtn.onclick = () => {
+startGameBtn.addEventListener(
+    "click",
+    () => {
 
-    players = [];
+        players = [];
 
-    document
-        .querySelectorAll("#playerInputs input")
-        .forEach((input,index) => {
+        document
+            .querySelectorAll("#playerInputs input")
+            .forEach((input, index) => {
 
-            players.push({
-                name:
-                    input.value.trim() ||
-                    `Player ${index + 1}`,
+                players.push({
+                    name:
+                        input.value.trim() ||
+                        `Player ${index + 1}`,
 
-                color: COLORS[index],
-                votes: 0
+                    color:
+                        COLORS[index],
+
+                    votes: 0
+                });
+
             });
 
-        });
 
-    const topics = Object.keys(WORDS);
+        /* Pick initial topic */
 
-    topic = randomItem(topics);
+        const topics =
+            Object.keys(WORDS);
 
-    secretWord = randomItem(WORDS[topic]);
+        topic =
+            randomItem(topics);
 
-    traitorIndex =
-        Math.floor(
-            Math.random() * players.length
-        );
+        secretWord =
+            randomItem(WORDS[topic]);
 
-    identityIndex = 0;
 
-    votes = new Array(players.length).fill(null);
+        /* Pick Traitor */
 
-    topicName.textContent = topic;
+        traitorIndex =
+            Math.floor(
+                Math.random() *
+                players.length
+            );
 
-    showScreen("topic");
-};
+
+        identityIndex = 0;
+
+        votes =
+            new Array(players.length)
+                .fill(null);
+
+
+        topicName.textContent =
+            topic;
+
+        showScreen("topic");
+
+    }
+);
 
 
 /* =========================================================
-   TOPIC
+   SKIP TOPIC
+   THIS IS THE IMPORTANT FIX
 ========================================================= */
 
-continueTopicBtn.onclick = () => {
+skipTopicBtn.addEventListener(
+    "click",
+    function () {
 
-    setupIdentity();
+        const topics =
+            Object.keys(WORDS);
 
-    showScreen("identity");
+        if (topics.length === 0) {
+            return;
+        }
 
-};
+
+        /*
+           Keep selecting until a DIFFERENT
+           topic is obtained.
+        */
+
+        let newTopic;
+
+        do {
+
+            newTopic =
+                randomItem(topics);
+
+        } while (
+            topics.length > 1 &&
+            newTopic === topic
+        );
 
 
-skipTopicBtn.onclick = () => {
+        /* Change topic */
 
-    const topics = Object.keys(WORDS);
+        topic = newTopic;
 
-    let newTopic;
 
-    do {
-        newTopic = randomItem(topics);
-    } while (
-        topics.length > 1 &&
-        newTopic === topic
-    );
+        /*
+           IMPORTANT:
+           Generate a completely NEW
+           secret word from the new topic.
+        */
 
-    topic = newTopic;
+        secretWord =
+            randomItem(
+                WORDS[topic]
+            );
 
-    secretWord = randomItem(
-        WORDS[topic]
-    );
 
-    topicName.textContent = topic;
+        /*
+           Immediately update the screen.
+        */
 
-};
+        topicName.textContent =
+            topic;
+
+
+        /*
+           Small visual feedback.
+        */
+
+        skipTopicBtn.textContent =
+            "✓ TOPIC CHANGED!";
+
+        setTimeout(() => {
+
+            skipTopicBtn.textContent =
+                "🔄 SKIP TOPIC";
+
+        }, 700);
+
+    }
+);
+
+
+/* =========================================================
+   CONTINUE TOPIC
+========================================================= */
+
+continueTopicBtn.addEventListener(
+    "click",
+    () => {
+
+        setupIdentity();
+
+        showScreen("identity");
+
+    }
+);
+
 
 /* =========================================================
    IDENTITY
@@ -451,7 +543,8 @@ skipTopicBtn.onclick = () => {
 
 function setupIdentity() {
 
-    const player = players[identityIndex];
+    const player =
+        players[identityIndex];
 
     identityPlayerName.textContent =
         player.name;
@@ -462,93 +555,123 @@ function setupIdentity() {
     identityAvatar.style.background =
         player.color;
 
-    identityReveal.classList.add("hidden");
-
-    revealBtn.style.display = "block";
-
-    identityContent.innerHTML = "";
-}
-
-
-revealBtn.onclick = () => {
-
-    revealBtn.style.display = "none";
-
-    identityReveal.classList.remove(
+    identityReveal.classList.add(
         "hidden"
     );
 
-    const traitor =
-        identityIndex === traitorIndex;
+    revealBtn.style.display =
+        "block";
 
-    if (traitor) {
+    identityContent.innerHTML =
+        "";
+}
 
-        identityContent.innerHTML = `
-            <div class="traitor-reveal">
 
-                <strong>🕵️ YOU ARE THE TRAITOR!</strong>
+revealBtn.addEventListener(
+    "click",
+    () => {
 
-                <p>
-                    Topic:
-                    <b>${topic}</b>
-                </p>
+        revealBtn.style.display =
+            "none";
 
-                <p class="muted">
-                    You don't know the secret word.
-                    Watch the drawing and figure it out!
-                </p>
+        identityReveal.classList.remove(
+            "hidden"
+        );
 
-            </div>
-        `;
 
-    } else {
+        const isTraitor =
+            identityIndex ===
+            traitorIndex;
 
-        identityContent.innerHTML = `
-            <div class="real-artist">
 
-                <p>
-                    Your secret word:
-                </p>
+        if (isTraitor) {
 
-                <span class="secret-word">
-                    ${secretWord}
-                </span>
+            identityContent.innerHTML = `
 
-                <p class="muted">
-                    Topic: ${topic}
-                </p>
+                <div class="traitor-reveal">
 
-            </div>
-        `;
+                    <strong>
+                        🕵️ YOU ARE THE TRAITOR!
+                    </strong>
+
+                    <p>
+                        Topic:
+                        <b>${topic}</b>
+                    </p>
+
+                    <p class="muted">
+                        You don't know the secret word.
+                        Watch the drawing and figure it out!
+                    </p>
+
+                </div>
+
+            `;
+
+        } else {
+
+            identityContent.innerHTML = `
+
+                <div>
+
+                    <p>
+                        Your secret word:
+                    </p>
+
+                    <span class="secret-word">
+                        ${secretWord}
+                    </span>
+
+                    <p class="muted">
+                        Topic: ${topic}
+                    </p>
+
+                </div>
+
+            `;
+
+        }
 
     }
+);
 
-};
 
+/* =========================================================
+   HIDE & PASS
+========================================================= */
 
-hidePassBtn.onclick = () => {
+hidePassBtn.addEventListener(
+    "click",
+    () => {
 
-    identityIndex++;
+        identityIndex++;
 
-    if (identityIndex >= players.length) {
+        if (
+            identityIndex >=
+            players.length
+        ) {
 
-        startDrawing();
+            startDrawing();
 
-    } else {
+        } else {
 
-        setupIdentity();
+            setupIdentity();
+
+        }
 
     }
-
-};
+);
 
 
 /* =========================================================
    CANVAS
 ========================================================= */
 
-canvas = $("drawingCanvas");
-ctx = canvas.getContext("2d");
+canvas =
+    $("drawingCanvas");
+
+ctx =
+    canvas.getContext("2d");
 
 
 function resizeCanvas() {
@@ -566,12 +689,22 @@ function resizeCanvas() {
         rect.height * ratio;
 
     ctx.setTransform(
-        ratio,0,0,ratio,0,0
+        ratio,
+        0,
+        0,
+        ratio,
+        0,
+        0
     );
 
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    ctx.lineWidth = 7;
+    ctx.lineCap =
+        "round";
+
+    ctx.lineJoin =
+        "round";
+
+    ctx.lineWidth =
+        7;
 }
 
 
@@ -582,7 +715,9 @@ function clearCanvas() {
 
     ctx.save();
 
-    ctx.setTransform(1,0,0,1,0,0);
+    ctx.setTransform(
+        1,0,0,1,0,0
+    );
 
     ctx.clearRect(
         0,
@@ -593,7 +728,8 @@ function clearCanvas() {
 
     ctx.restore();
 
-    ctx.fillStyle = "#ffffff";
+    ctx.fillStyle =
+        "#ffffff";
 
     ctx.fillRect(
         0,
@@ -605,7 +741,7 @@ function clearCanvas() {
 
 
 /* =========================================================
-   DRAWING START
+   START DRAWING
 ========================================================= */
 
 function startDrawing() {
@@ -623,26 +759,34 @@ function startDrawing() {
 
         startTurn();
 
-    },100);
-
+    }, 100);
 }
 
 
 /* =========================================================
-   PLAYER TURN
+   START PLAYER TURN
 ========================================================= */
 
 function startTurn() {
 
     clearInterval(timer);
 
-    passBuffer.classList.add("hidden");
+    clearInterval(
+        bufferTimerInterval
+    );
+
+    passBuffer.classList.add(
+        "hidden"
+    );
 
     turnActive = true;
+
     isDrawing = false;
+
 
     const player =
         players[playerIndex];
+
 
     drawingPlayerName.textContent =
         player.name;
@@ -650,75 +794,96 @@ function startTurn() {
     drawingPlayerName.style.color =
         player.color;
 
+
     playerColorDot.style.background =
         player.color;
+
 
     roundLabel.textContent =
         `ROUND ${round} / 3`;
 
+
     strokeInfo.textContent =
-        `Draw freely • ${topic}`;
+        `Draw freely!`;
+
 
     canvasMessage.classList.remove(
         "hidden"
     );
 
-    doneBtn.disabled = false;
+
+    doneBtn.disabled =
+        false;
+
 
     timeLeft = 20;
 
-    timerDisplay.textContent = timeLeft;
+    timerDisplay.textContent =
+        timeLeft;
 
-    timer = setInterval(() => {
 
-        timeLeft--;
+    timer =
+        setInterval(() => {
 
-        timerDisplay.textContent =
-            timeLeft;
+            timeLeft--;
 
-        if (timeLeft <= 0) {
+            timerDisplay.textContent =
+                timeLeft;
 
-            clearInterval(timer);
 
-            endTurn();
+            if (timeLeft <= 0) {
 
-        }
+                clearInterval(timer);
 
-    },1000);
+                endTurn();
+
+            }
+
+        }, 1000);
 
 }
 
 
 /* =========================================================
-   POINTER DRAWING
+   DRAWING
 ========================================================= */
 
-function position(e) {
+function getPosition(event) {
 
     const rect =
         canvas.getBoundingClientRect();
 
     return {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-    };
 
+        x:
+            event.clientX -
+            rect.left,
+
+        y:
+            event.clientY -
+            rect.top
+
+    };
 }
 
 
 canvas.addEventListener(
     "pointerdown",
-    e => {
+    event => {
 
-        if (!turnActive) return;
+        if (!turnActive)
+            return;
 
         isDrawing = true;
 
         canvas.setPointerCapture(
-            e.pointerId
+            event.pointerId
         );
 
-        const p = position(e);
+
+        const p =
+            getPosition(event);
+
 
         ctx.beginPath();
 
@@ -727,10 +892,14 @@ canvas.addEventListener(
             p.y
         );
 
+
         ctx.strokeStyle =
             players[playerIndex].color;
 
-        ctx.lineWidth = 7;
+
+        ctx.lineWidth =
+            7;
+
 
         canvasMessage.classList.add(
             "hidden"
@@ -742,12 +911,19 @@ canvas.addEventListener(
 
 canvas.addEventListener(
     "pointermove",
-    e => {
+    event => {
 
-        if (!isDrawing || !turnActive)
+        if (
+            !isDrawing ||
+            !turnActive
+        ) {
             return;
+        }
 
-        const p = position(e);
+
+        const p =
+            getPosition(event);
+
 
         ctx.lineTo(
             p.x,
@@ -762,18 +938,17 @@ canvas.addEventListener(
 
 canvas.addEventListener(
     "pointerup",
-    e => {
-
-        if (!isDrawing)
-            return;
+    event => {
 
         isDrawing = false;
 
         try {
+
             canvas.releasePointerCapture(
-                e.pointerId
+                event.pointerId
             );
-        } catch (_) {}
+
+        } catch (error) {}
 
     }
 );
@@ -793,13 +968,17 @@ canvas.addEventListener(
    DONE & PASS
 ========================================================= */
 
-doneBtn.onclick = () => {
+doneBtn.addEventListener(
+    "click",
+    () => {
 
-    if (!turnActive) return;
+        if (!turnActive)
+            return;
 
-    endTurn();
+        endTurn();
 
-};
+    }
+);
 
 
 /* =========================================================
@@ -808,21 +987,25 @@ doneBtn.onclick = () => {
 
 function endTurn() {
 
-    if (!turnActive) return;
+    if (!turnActive)
+        return;
+
 
     turnActive = false;
+
     isDrawing = false;
 
     clearInterval(timer);
 
-    doneBtn.disabled = true;
+    doneBtn.disabled =
+        true;
+
 
     /*
-       IMPORTANT:
-       The next player's timer does NOT
-       start immediately.
+       NEVER start the next player's
+       timer immediately.
 
-       Exactly 3 seconds of buffer.
+       Always give exactly 3 seconds.
     */
 
     showPassBuffer();
@@ -836,18 +1019,24 @@ function endTurn() {
 
 function showPassBuffer() {
 
-    let nextIndex =
+    let nextPlayerIndex =
         playerIndex + 1;
 
-    let nextRound = round;
+    let nextRound =
+        round;
 
-    if (nextIndex >= players.length) {
 
-        nextIndex = 0;
+    if (
+        nextPlayerIndex >=
+        players.length
+    ) {
+
+        nextPlayerIndex = 0;
 
         nextRound++;
 
     }
+
 
     if (nextRound > 3) {
 
@@ -857,51 +1046,68 @@ function showPassBuffer() {
     } else {
 
         nextPlayerText.textContent =
-            `Hand the phone to ${players[nextIndex].name}`;
+            `Hand the phone to ${players[nextPlayerIndex].name}`;
 
     }
+
 
     passBuffer.classList.remove(
         "hidden"
     );
 
+
     let seconds = 3;
 
-    bufferTimer.textContent = seconds;
+    bufferTimerDisplay.textContent =
+        seconds;
 
-    const buffer = setInterval(() => {
 
-        seconds--;
+    clearInterval(
+        bufferTimerInterval
+    );
 
-        bufferTimer.textContent =
-            seconds;
 
-        if (seconds <= 0) {
+    bufferTimerInterval =
+        setInterval(() => {
 
-            clearInterval(buffer);
+            seconds--;
 
-            passBuffer.classList.add(
-                "hidden"
-            );
+            bufferTimerDisplay.textContent =
+                seconds;
 
-            advanceTurn();
 
-        }
+            if (seconds <= 0) {
 
-    },1000);
+                clearInterval(
+                    bufferTimerInterval
+                );
+
+                passBuffer.classList.add(
+                    "hidden"
+                );
+
+                advanceTurn();
+
+            }
+
+        }, 1000);
 
 }
 
 
 /* =========================================================
-   NEXT TURN
+   ADVANCE TURN
 ========================================================= */
 
 function advanceTurn() {
 
     playerIndex++;
 
-    if (playerIndex >= players.length) {
+
+    if (
+        playerIndex >=
+        players.length
+    ) {
 
         playerIndex = 0;
 
@@ -909,9 +1115,6 @@ function advanceTurn() {
 
     }
 
-    /*
-       3 rounds complete
-    */
 
     if (round > 3) {
 
@@ -921,25 +1124,32 @@ function advanceTurn() {
 
     }
 
+
     startTurn();
 
 }
 
 
 /* =========================================================
-   VOTING START
+   START VOTING
 ========================================================= */
 
 function startVoting() {
 
     votes =
-        new Array(players.length).fill(null);
+        new Array(players.length)
+            .fill(null);
+
 
     players.forEach(
-        p => p.votes = 0
+        player => {
+            player.votes = 0;
+        }
     );
 
+
     voteIndex = 0;
+
 
     setupVotePass();
 
@@ -957,11 +1167,14 @@ function setupVotePass() {
     const player =
         players[voteIndex];
 
+
     voteAvatar.textContent =
         voteIndex + 1;
 
+
     voteAvatar.style.background =
         player.color;
+
 
     votePlayerName.textContent =
         player.name;
@@ -969,20 +1182,26 @@ function setupVotePass() {
 }
 
 
-startVoteBtn.onclick = () => {
+startVoteBtn.addEventListener(
+    "click",
+    () => {
 
-    selectedVote = null;
+        selectedVote = null;
 
-    submitVoteBtn.disabled = true;
+        submitVoteBtn.disabled =
+            true;
 
-    votingForName.textContent =
-        `${players[voteIndex].name}'s Vote`;
 
-    renderVotes();
+        votingForName.textContent =
+            `${players[voteIndex].name}'s Vote`;
 
-    showScreen("voteSelection");
 
-};
+        renderVotes();
+
+        showScreen("voteSelection");
+
+    }
+);
 
 
 /* =========================================================
@@ -991,54 +1210,84 @@ startVoteBtn.onclick = () => {
 
 function renderVotes() {
 
-    voteOptions.innerHTML = "";
+    voteOptions.innerHTML =
+        "";
+
 
     players.forEach(
-        (player,index) => {
+        (player, index) => {
 
-            if (index === voteIndex)
+            if (
+                index === voteIndex
+            ) {
                 return;
+            }
+
 
             const button =
-                document.createElement("button");
+                document.createElement(
+                    "button"
+                );
+
 
             button.className =
                 "vote-option";
 
+
+            button.type =
+                "button";
+
+
             button.innerHTML = `
-                <span class="vote-color"
-                      style="background:${player.color}">
+
+                <span
+                    class="vote-color"
+                    style="background:${player.color}">
                 </span>
 
                 <span class="vote-name">
                     ${player.name}
                 </span>
+
             `;
 
-            button.onclick = () => {
 
-                selectedVote = index;
+            button.addEventListener(
+                "click",
+                () => {
 
-                document
-                    .querySelectorAll(
-                        ".vote-option"
-                    )
-                    .forEach(
-                        b =>
-                        b.classList.remove(
-                            "selected"
+                    selectedVote =
+                        index;
+
+
+                    document
+                        .querySelectorAll(
+                            ".vote-option"
                         )
+                        .forEach(
+                            b => {
+                                b.classList.remove(
+                                    "selected"
+                                );
+                            }
+                        );
+
+
+                    button.classList.add(
+                        "selected"
                     );
 
-                button.classList.add(
-                    "selected"
-                );
 
-                submitVoteBtn.disabled = false;
+                    submitVoteBtn.disabled =
+                        false;
 
-            };
+                }
+            );
 
-            voteOptions.appendChild(button);
+
+            voteOptions.appendChild(
+                button
+            );
 
         }
     );
@@ -1050,31 +1299,44 @@ function renderVotes() {
    SUBMIT VOTE
 ========================================================= */
 
-submitVoteBtn.onclick = () => {
+submitVoteBtn.addEventListener(
+    "click",
+    () => {
 
-    if (selectedVote === null)
-        return;
+        if (
+            selectedVote === null
+        ) {
+            return;
+        }
 
-    votes[voteIndex] =
-        selectedVote;
 
-    players[selectedVote].votes++;
+        votes[voteIndex] =
+            selectedVote;
 
-    voteIndex++;
 
-    if (voteIndex >= players.length) {
+        players[selectedVote].votes++;
 
-        showResults();
 
-    } else {
+        voteIndex++;
 
-        setupVotePass();
 
-        showScreen("voting");
+        if (
+            voteIndex >=
+            players.length
+        ) {
+
+            showResults();
+
+        } else {
+
+            setupVotePass();
+
+            showScreen("voting");
+
+        }
 
     }
-
-};
+);
 
 
 /* =========================================================
@@ -1083,14 +1345,16 @@ submitVoteBtn.onclick = () => {
 
 function showResults() {
 
-    resultsList.innerHTML = "";
+    resultsList.innerHTML =
+        "";
+
 
     const sorted =
         players
             .map(
-                (p,i) => ({
-                    ...p,
-                    index:i
+                (player, index) => ({
+                    ...player,
+                    index
                 })
             )
             .sort(
@@ -1098,22 +1362,29 @@ function showResults() {
                     b.votes - a.votes
             );
 
+
     sorted.forEach(
-        (player,index) => {
+        (player, index) => {
 
             const row =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
+
 
             row.className =
                 "result-row";
 
+
             row.innerHTML = `
+
                 <div class="result-rank">
                     ${index + 1}
                 </div>
 
-                <div class="vote-color"
-                     style="background:${player.color}">
+                <div
+                    class="vote-color"
+                    style="background:${player.color}">
                 </div>
 
                 <div class="result-player">
@@ -1123,9 +1394,13 @@ function showResults() {
                 <div class="vote-count">
                     ${player.votes}
                 </div>
+
             `;
 
-            resultsList.appendChild(row);
+
+            resultsList.appendChild(
+                row
+            );
 
         }
     );
@@ -1134,32 +1409,43 @@ function showResults() {
     const maxVotes =
         Math.max(
             ...players.map(
-                p => p.votes
+                player =>
+                    player.votes
             )
         );
+
 
     const majority =
         maxVotes >
         players.length / 2;
 
-    const top =
+
+    const topPlayers =
         players.filter(
-            p => p.votes === maxVotes
+            player =>
+                player.votes === maxVotes
         );
+
 
     const caught =
         majority &&
-        top.length === 1 &&
+        topPlayers.length === 1 &&
         players[traitorIndex].votes === maxVotes;
 
 
     if (caught) {
 
         resultSummary.innerHTML = `
-            <strong>🎯 The Traitor was caught!</strong>
+
+            <strong>
+                🎯 The Traitor was caught!
+            </strong>
+
             <p class="muted">
-                But they still have one final chance...
+                But the Traitor still has
+                one final chance.
             </p>
+
         `;
 
         continueResultsBtn.textContent =
@@ -1168,11 +1454,16 @@ function showResults() {
     } else {
 
         resultSummary.innerHTML = `
-            <strong>🕵️ The Traitor escapes!</strong>
+
+            <strong>
+                🕵️ The Traitor escapes!
+            </strong>
+
             <p class="muted">
                 The players failed to identify
                 the Traitor correctly.
             </p>
+
         `;
 
         continueResultsBtn.textContent =
@@ -1180,8 +1471,10 @@ function showResults() {
 
     }
 
+
     continueResultsBtn.dataset.caught =
         caught ? "yes" : "no";
+
 
     showScreen("results");
 
@@ -1189,66 +1482,83 @@ function showResults() {
 
 
 /* =========================================================
-   RESULTS CONTINUE
+   RESULT CONTINUE
 ========================================================= */
 
-continueResultsBtn.onclick = () => {
+continueResultsBtn.addEventListener(
+    "click",
+    () => {
 
-    const caught =
-        continueResultsBtn.dataset.caught ===
-        "yes";
+        const caught =
+            continueResultsBtn.dataset.caught ===
+            "yes";
 
-    if (caught) {
 
-        guessArea.classList.add("hidden");
+        if (caught) {
 
-        showGuessInputBtn.style.display =
-            "block";
+            guessArea.classList.add(
+                "hidden"
+            );
 
-        guessInput.value = "";
+            showGuessInputBtn.style.display =
+                "block";
 
-        showScreen("traitorGuess");
+            guessInput.value =
+                "";
 
-    } else {
+            showScreen("traitorGuess");
 
-        finishGame(
-            false,
-            "The Traitor was not caught."
-        );
+        } else {
+
+            finishGame(
+                true,
+                "The Traitor was not caught."
+            );
+
+        }
 
     }
-
-};
+);
 
 
 /* =========================================================
    TRAITOR GUESS
 ========================================================= */
 
-showGuessInputBtn.onclick = () => {
+showGuessInputBtn.addEventListener(
+    "click",
+    () => {
 
-    showGuessInputBtn.style.display =
-        "none";
+        showGuessInputBtn.style.display =
+            "none";
 
-    guessArea.classList.remove(
-        "hidden"
-    );
+        guessArea.classList.remove(
+            "hidden"
+        );
 
-    guessInput.focus();
+        guessInput.focus();
 
-};
+    }
+);
 
 
-submitGuessBtn.onclick =
-    submitGuess;
+submitGuessBtn.addEventListener(
+    "click",
+    submitGuess
+);
 
 
 guessInput.addEventListener(
     "keydown",
-    e => {
+    event => {
 
-        if (e.key === "Enter")
+        if (
+            event.key === "Enter"
+        ) {
+
             submitGuess();
+
+        }
 
     }
 );
@@ -1261,12 +1571,15 @@ function submitGuess() {
             .trim()
             .toLowerCase();
 
+
     if (!guess)
         return;
+
 
     const correct =
         guess ===
         secretWord.toLowerCase();
+
 
     if (correct) {
 
@@ -1288,7 +1601,7 @@ function submitGuess() {
 
 
 /* =========================================================
-   FINAL SCREEN
+   FINAL GAME
 ========================================================= */
 
 function finishGame(
@@ -1299,27 +1612,37 @@ function finishGame(
     finalMessage.textContent =
         message;
 
+
     finalWord.textContent =
         secretWord;
+
+
+    finalTopic.textContent =
+        topic;
+
 
     finalTraitor.textContent =
         players[traitorIndex].name;
 
+
     if (artistsWin) {
 
-        finalIcon.textContent = "🎨";
+        finalIcon.textContent =
+            "🎨";
 
         finalTitle.textContent =
             "Artists Win!";
 
     } else {
 
-        finalIcon.textContent = "🕵️";
+        finalIcon.textContent =
+            "🕵️";
 
         finalTitle.textContent =
             "Traitor Wins!";
 
     }
+
 
     showScreen("final");
 
@@ -1330,29 +1653,49 @@ function finishGame(
    NEW GAME
 ========================================================= */
 
-newGameBtn.onclick = () => {
+newGameBtn.addEventListener(
+    "click",
+    () => {
 
-    clearInterval(timer);
+        clearInterval(timer);
 
-    players = [];
-    topic = "";
-    secretWord = "";
-    traitorIndex = -1;
+        clearInterval(
+            bufferTimerInterval
+        );
 
-    identityIndex = 0;
-    round = 1;
-    playerIndex = 0;
-    voteIndex = 0;
 
-    playerInputs.innerHTML = "";
+        players = [];
 
-    addPlayer("Player 1");
-    addPlayer("Player 2");
-    addPlayer("Player 3");
+        topic = "";
 
-    showScreen("setup");
+        secretWord = "";
 
-};
+        traitorIndex = -1;
+
+        identityIndex = 0;
+
+        round = 1;
+
+        playerIndex = 0;
+
+        voteIndex = 0;
+
+        selectedVote = null;
+
+
+        playerInputs.innerHTML =
+            "";
+
+
+        addPlayer("Player 1");
+        addPlayer("Player 2");
+        addPlayer("Player 3");
+
+
+        showScreen("setup");
+
+    }
+);
 
 
 /* =========================================================
@@ -1364,18 +1707,15 @@ window.addEventListener(
     () => {
 
         if (
-            screens.drawing.classList.contains(
-                "active"
-            )
+            $("drawingScreen")
+                .classList
+                .contains("active")
         ) {
 
-            /*
-               Do not resize unnecessarily
-               while somebody is drawing.
-            */
-
             if (!isDrawing) {
+
                 resizeCanvas();
+
             }
 
         }
@@ -1390,21 +1730,21 @@ window.addEventListener(
 
 document.addEventListener(
     "touchmove",
-    e => {
+    event => {
 
         if (
-            screens.drawing.classList.contains(
-                "active"
-            ) &&
-            e.target === canvas
+            $("drawingScreen")
+                .classList
+                .contains("active") &&
+            event.target === canvas
         ) {
 
-            e.preventDefault();
+            event.preventDefault();
 
         }
 
     },
     {
-        passive:false
+        passive: false
     }
 );
