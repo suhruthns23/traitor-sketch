@@ -120,9 +120,8 @@ const WORDS = {
     ],
 
     Music: [
-        "Guitar","Piano","Drum","Violin","Flute","Trumpet","Saxophone","Harmonica","Tambourine","Bell",
-        "Harp","Cello","Microphone","Speaker","DJ Turntable","Music Note","Headphones","Drumstick","Concert Stage","Radio",
-        "Keyboard","Tabla","Cymbal","Xylophone","Maracas","Sitar","Recorder","Accordion","Music Stand","Guitar Pick"
+        "Guitar","Piano","Drum","Violin","Flute","Trumpet","Bell","Microphone","Speaker","Headphones","Drumstick","Radio",
+        "Keyboard","Tabla","Music Stand"
     ],
 
     Clothing: [
