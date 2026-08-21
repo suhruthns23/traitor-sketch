@@ -237,10 +237,9 @@ const screens = {
 const playerInputs = $("playerInputs");
 const addPlayerBtn = $("addPlayerBtn");
 const startGameBtn = $("startGameBtn");
-
 const topicName = $("topicName");
 const continueTopicBtn = $("continueTopicBtn");
-
+const skipTopicBtn = $("skipTopicBtn");
 const identityAvatar = $("identityAvatar");
 const identityPlayerName = $("identityPlayerName");
 const revealBtn = $("revealBtn");
