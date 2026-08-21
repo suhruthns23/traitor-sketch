@@ -422,6 +422,29 @@ continueTopicBtn.onclick = () => {
 };
 
 
+skipTopicBtn.onclick = () => {
+
+    const topics = Object.keys(WORDS);
+
+    let newTopic;
+
+    do {
+        newTopic = randomItem(topics);
+    } while (
+        topics.length > 1 &&
+        newTopic === topic
+    );
+
+    topic = newTopic;
+
+    secretWord = randomItem(
+        WORDS[topic]
+    );
+
+    topicName.textContent = topic;
+
+};
+
 /* =========================================================
    IDENTITY
 ========================================================= */
